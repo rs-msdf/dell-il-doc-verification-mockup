@@ -24,7 +24,7 @@ The following decisions are settled for Phase 1 planning:
 - A required document item can contain multiple uploaded files for the same document type; reviewers need a scrollable/selectable uploaded-file list while reviewing that document item.
 - Top-level progress should be shown by group completion only, such as `3 of 5 groups complete`.
 - The mockup is desktop-focused; document preview and field review should be planned as side-by-side regions.
-- Blockers should be grouped by category, including unverified documents, unchecked fields, and required reopen comments when relevant.
+- Blockers should be visible by category, including unverified documents, unchecked fields, and required reopen comments when relevant. Later phases may express those categories as compact counts, inline indicators, or detailed lists.
 
 ## 4. Primary User
 
@@ -82,12 +82,12 @@ The journey map should show the reviewer objective, visible information, key dec
 The main workspace must be organized around grouped verification. Phase 1 must define the placement and role of these regions:
 
 - Application header: applicant identity, application reference, and group-based overall progress.
-- Group navigation: five verification groups with completion status.
+- Group overview/navigation: five verification groups with completion status.
 - Selected group summary: group purpose, current state, and missing completion items.
 - Document review area: expected documents, document state, applicant comments, preview availability, and document-level actions.
 - Uploaded file list: scrollable/selectable list of files submitted for the selected document type.
 - Application field review area: current field values, editable field controls, and separate verified checkboxes.
-- Blockers or missing items area: explicit list of documents and fields preventing group completion.
+- Blockers or missing items area: explicit status-row counts, inline indicators, or a detailed list of documents and fields preventing group completion.
 
 The structure must minimize context switching between document validity checks and application consistency checks.
 
@@ -165,7 +165,7 @@ Phase 1 must clarify how incomplete groups expose blockers:
 
 The selected group view must make missing completion items explicit. A reviewer should not need to infer completion blockers by manually scanning the entire group.
 
-Blockers should be grouped by category.
+Blockers should be visible by category.
 
 For each incomplete group, Phase 1 must define a blocker display that can list:
 
@@ -181,10 +181,10 @@ The group navigation must also show complete versus incomplete status at a glanc
 Phase 1 must produce a screen structure that includes:
 
 - One primary reviewer workspace screen.
-- Persistent group navigation.
+- Group overview/navigation.
 - Selected group details.
-- Document list or document panel.
-- Scrollable uploaded-file list for the selected document type.
+- Document list, document tabs, or selected document panel.
+- Scrollable uploaded-file selector or tabs for the selected document type.
 - Document preview region.
 - Applicant comment visibility.
 - Field verification region.
@@ -206,11 +206,11 @@ Phase 1 should produce:
 - Blocker visibility model for incomplete groups.
 - Decision log and remaining open questions list for later phases.
 
-## 15. Remaining Open Questions
+## 15. Clarifications carried into later phases
 
-- Do uploaded file entries need explicit labels for `initial upload`, `applicant replacement`, and `requested correction`, or is upload date/order enough for Phase 1?
-- Should required reopen comments appear in the Phase 1 blocker model, or only begin in the clickable prototype phase?
-- Should group navigation show only complete/incomplete state, or also a count of blockers within each group?
+- Phase 2 uses timestamp-only uploaded-file tabs in the main comparison row, while preserving upload labels in sample data for traceability and later interactive phases.
+- Required reopen comments remain part of the Phase 1 blocker model, but enforcement belongs to clickable phases.
+- Phase 2 uses complete/incomplete status plus blocker counts in the group overview.
 
 ## 16. Exit Criteria
 

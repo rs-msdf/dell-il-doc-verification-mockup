@@ -11,8 +11,9 @@ Confirmed build direction:
 - Build the actual static UI for Phase 2 now.
 - Use a group overview and one opened Applicant ID workspace; omit lower-priority reference coverage panels from the UI.
 - Keep the fictional Dana Levi sample data.
-- Use explicit uploaded-file labels for traceability.
+- Use timestamp-only uploaded-file tabs in the main comparison row, while preserving upload labels in sample data for traceability.
 - Keep the style loosely Salesforce Lightning-inspired rather than a strict Salesforce clone.
+- Combine document review and document preview into one evidence pane so the reviewer can keep field verification visible beside the document.
 
 ## Screen layout
 
@@ -23,14 +24,11 @@ Confirmed build direction:
 | Status, document progress, field progress, and blocker count per group                           |
 +------------------------------------------------------------------------------------------------+
 | All document groups / Applicant ID                                                              |
++ Incomplete | 2 documents need verification | 2 fields unchecked | 4 blockers          |
 +------------------------------------------------------------------------------------------------+
-| Applicant ID Summary | 2 documents need verification | 2 fields unchecked | 4 blockers          |
-+------------------------------------------------------------------------------------------------+
-| Document Review                               | Document Preview + Uploaded File Tabs           |
-| Expected documents, comments, controls         | File tabs and selected file review surface       |
-+----------------------------------------------+-------------------------------------------------+
-| Field Consistency Review                                                                          |
-| Field rows with editable inputs and compact `Confirmed` / `Confirm` checkbox labels               |
+| Document Evidence                                                                  | Fields       |
+| Document tabs, selected document actions, uploaded-file tabs, preview surface       | Field rows   |
+| and file-level View full screen action                                             | Confirm UI   |
 +------------------------------------------------------------------------------------------------+
 ```
 
@@ -68,21 +66,23 @@ Recommended static statuses:
 
 The blocker count is useful in Phase 2 as a static scanning aid, while complete/incomplete remains the minimum required status.
 
-## Selected group summary
+## Focused group status row
 
-For the selected `Applicant ID` group, show:
+For the selected `Applicant ID` group, keep the focused status compact in the breadcrumb/status row:
 
 - Group name: Applicant ID.
 - Group state: Incomplete.
-- Expected documents: ID, back of ID, ID appendix.
-- Related fields: first name, last name, ID number, date of birth, marital status, number of children under 18.
 - Missing summary: `2 documents need verification`, `2 fields unchecked`, `4 blockers`.
 
-The summary should make the total missing work visible before the reviewer scans the full document and field areas. Specific blockers should remain visible on the affected document and field rows.
+The status row should make the total missing work visible without adding a separate summary panel. Expected documents are represented by the document tabs, and related fields are represented by the field verification rail. Specific blockers should remain visible on the affected document tabs, selected document detail, and field rows.
 
-## Document review area
+## Document evidence pane
 
-The selected group document list should show three document items:
+Document review and document preview should be unified into one primary pane. The pane should keep prominent document-level tabs, uploaded-file subtabs, the file-level preview action, and the preview surface together, with the document display receiving the majority of the pane height.
+
+This combined pane should show only the critical document review details needed while comparing against fields: document states, the selected document's applicant comment, reviewer decision actions, selected uploaded-file tabs, the file-level preview action, and the preview itself. The pane should omit a visible `Document Evidence` heading and let the document-type tabs own the top row, left-aligned above the preview controls. Reviewer decision actions and the selected document status chip should sit in a compact verification row between the document-type tabs and uploaded-file timestamp tabs, with the CTA action buttons on the left and the status chip on the right. The selected document's applicant comment should sit in a compact footer below the preview. The `View full screen` affordance should remain compact and adjacent to the uploaded-file timestamp tabs.
+
+The selected group document tabs should show three document items:
 
 | Document | State | Static treatment |
 | --- | --- | --- |
@@ -92,42 +92,46 @@ The selected group document list should show three document items:
 
 The selected document item should be `Back of ID` so the mockup can demonstrate uploaded-file tabs in the preview pane and the selected preview.
 
-For each document item, show:
+For each document tab, show:
 
 - Document name.
-- State badge.
-- Applicant comment snippet or full comment.
-- File count when uploaded files exist.
-- Decision controls as static disabled or visual-only buttons, such as `Verify` and `Reopen`, without interaction.
-- Reopen comment area placeholder visible near the reopen action.
+- Binary verification indicator: `Verified` when the document state is complete, otherwise `Needs review` so remaining document work is visible before opening the tab.
+
+For the selected document detail area, show:
+
+- Current document state as a standalone status chip on the right side of the verification row; do not repeat the selected document title from the active tab or add a `Document status` label.
+- Applicant comment snippet or full comment, clearly labeled as the applicant comment, below the preview so it does not push the display down.
+- Decision controls as static disabled or visual-only buttons, such as `Verify` and `Reopen`, without interaction, placed as the left-side CTA group in the verification row.
+
+Do not show `Doesn't exist` as a reviewer action. It is a document state set by the candidate flow, not a reviewer transition.
 
 ## Uploaded file tabs
 
-The selected `Back of ID` document should show multiple uploaded files as tabs at the top of the `Document Preview` pane, directly above the document display area. This keeps file selection visually attached to the preview it controls.
+The selected `Back of ID` document should show multiple uploaded files as compact subtabs inside the `Document Evidence` pane, directly beside the preview action and above the document display area. This keeps file selection visually attached to the preview it controls while conserving vertical space.
 
 File entries:
 
-| File | Upload label | Date | Selected |
-| --- | --- | --- | --- |
-| `back-id-replacement-2026-06-24.pdf` | Applicant replacement | 2026-06-24 | Yes |
-| `back-id-initial-2026-06-15.pdf` | Initial upload | 2026-06-15 | No |
+| File | Tab timestamp | Selected |
+| --- | --- | --- |
+| `back-id-replacement-2026-06-24.pdf` | 2026-06-24 14:32 | Yes |
+| `back-id-initial-2026-06-15.pdf` | 2026-06-15 09:18 | No |
 
-Phase 2 should include explicit upload reason labels because they help demonstrate traceability. This does not close the open question permanently; it tests the value of labels in the static mockup.
-
-For the Phase 2 build, explicit upload labels are confirmed and should be included in the static UI.
+Phase 2 should omit explicit upload reason labels and filenames from the tab row so the document display can sit higher. Date and time are sufficient for this static comparison mockup; filenames can move to lower supporting context if they prove useful.
 
 ## Document preview region
 
 For the selected `Back of ID` file, show a document-preview placeholder that feels like an actual evidence area:
 
-- Preview header with selected filename and a `View full screen` button.
+- Compact uploaded-file tabs with timestamp only, plus an icon-only full-screen button.
 - Page surface with realistic text blocks or document-like placeholder zones.
 - Basic metadata, such as page count or uploaded date.
 - Preview unavailable state shown in another static example for `Doesn't exist` or `Not uploaded` documents.
 
 The preview should not be decorative. It should clearly read as the place where evidence is inspected.
 
-## Field consistency review area
+## Field verification rail
+
+Field verification should sit to the right of the combined document evidence pane so reviewers can compare submitted values against the open document without scrolling past the preview. The rail should remain compact and task-focused.
 
 For the selected `Applicant ID` group, show all six fields:
 
@@ -147,10 +151,10 @@ Each row must show the editable value control separately from the field confirma
 For the selected `Applicant ID` group, do not add a separate `Blocker Details` panel. Blockers should be apparent from the workflow UI itself:
 
 - The selected summary shows `4 blockers` alongside the document and field missing summaries.
-- Document rows expose unverified document blockers through their current states: Back of ID as `Uploaded` and ID appendix as `Not uploaded`.
+- Document tabs expose unverified document blockers through `Needs review` indicators, and the selected document detail exposes the current state such as `Uploaded`.
 - Field rows expose unchecked field blockers through unchecked `Confirm` checkboxes.
 - No-preview context remains attached to the relevant document or supporting static state instead of appearing in a separate blocker block.
-- Required reopen comment blockers should appear next to the relevant reopen action when a reopen state is represented.
+- Reopen-comment validation should be handled by the UI flow when the action becomes interactive, not by instructional placeholder text in the static mockup.
 
 ## Static-only controls
 
@@ -158,7 +162,6 @@ Controls should look like real controls but should not imply interactivity in Ph
 
 - Verify document.
 - Reopen document.
-- Reopen comment input.
 - Field editable inputs.
 - Field confirmation checkboxes.
 - Group overview cards.

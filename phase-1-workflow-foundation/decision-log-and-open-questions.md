@@ -19,21 +19,21 @@ This file records settled Phase 1 workflow decisions and questions to carry into
 | `Doesn't exist` documents show no preview. | Reviewer decisions for these items rely on applicant comments and surrounding group context. |
 | Required reopen comments are represented in the Phase 1 blocker model. | Reopen comments are mandatory in the requirements, and their placement should be planned before interaction design. |
 
-## Open questions
+## Open questions and later-phase clarifications
 
 | Question | Suggested Phase 1 position | Later-phase impact |
 | --- | --- | --- |
-| Do uploaded file entries need explicit labels for `initial upload`, `applicant replacement`, and `requested correction`, or is upload date/order enough? | Keep file list structure able to show either upload order/date or an explicit reason label. | Stage 2 sample data and Stage 3 interactions may need labels if stakeholders need traceability. |
+| Do uploaded file entries need explicit labels for `initial upload`, `applicant replacement`, and `requested correction`, or is upload date/order enough? | Phase 2 uses timestamp-only tabs in the main comparison row and preserves labels in sample data. | Stage 3 can decide whether interactive file history needs visible labels. |
 | Should required reopen comments appear in the Phase 1 blocker model, or only begin in the clickable prototype phase? | Include them in Phase 1 as a planned blocker category. | Stage 3 should enforce required comment validation. |
-| Should group navigation show only complete/incomplete state, or also a count of blockers within each group? | Minimum is complete/incomplete. Blocker count is an optional later enhancement. | Stage 2 can test whether blocker counts help scanning across five groups. |
+| Should group navigation show only complete/incomplete state, or also a count of blockers within each group? | Phase 2 shows complete/incomplete status and blocker counts in the group overview cards. | Stage 3 can validate whether these counts should remain interactive navigation metadata. |
 | What exact applicant identity fields belong in the application header? | Use applicant name and application reference as the Phase 1 baseline. | Stage 2 sample data can add program/application metadata if useful. |
 | How detailed should document preview placeholders be in the static mockup? | Phase 1 only needs preview region placement and no-preview rules. | Stage 2 should define realistic preview treatments for uploaded files and absent documents. |
 
-## Stage 2 handoff notes
+## Stage 2 outcome notes
 
-- Use the Phase 1 workspace structure as the default screen for the static mockup.
-- Include representative states across groups: complete, incomplete, reopened, uploaded, verified, not uploaded, and `Doesn't exist`.
-- Keep applicant comments visible at the document item level.
-- Show at least one document item with multiple uploaded files to validate the scrollable/selectable file list.
-- Preserve separate field editing and verified checkbox controls in the visual design.
-- Make blocker categories visible in the selected group view, even if the static mockup only shows example blockers.
+- The completed static mockup uses a group overview followed by an opened Applicant ID workspace.
+- Representative states across groups remain covered by the UI plus Phase 2 sample data: complete, incomplete, reopened, uploaded, verified, not uploaded, and `Doesn't exist`.
+- Applicant comments are shown in the selected document detail area and retained for every document in sample data.
+- The Back of ID document shows multiple timestamp-only uploaded-file tabs.
+- Field editing and field verification remain separate visual controls.
+- Blocker categories are visible through focused status-row counts, document tab indicators/status chips, and unchecked field rows.

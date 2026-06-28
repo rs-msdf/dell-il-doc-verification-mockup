@@ -27,7 +27,7 @@ Each required document item has:
 - Applicant comment content when provided.
 - Preview availability based on the selected uploaded file and document state.
 - Reviewer decision controls based on current state.
-- Reopen comment area placeholder for later phases.
+- Reopen comment input when the reviewer chooses to reopen a document.
 
 Uploaded file entries are reviewable submissions under the document item. When an applicant corrects a `Reopened` document, the replacement appears in the same uploaded-file list for that required document item, and the document becomes review-ready again only after the replacement upload exists.
 
@@ -49,15 +49,15 @@ For each expected document, the workspace must show where reviewers find:
 
 | Required information | Workspace location |
 | --- | --- |
-| Document name | Document review area document list or selected document panel. |
-| Current document state | Document row and selected document details. |
-| Uploaded file list | Scrollable uploaded-file selector inside the selected document panel. |
-| Selected uploaded file | Highlighted file entry in uploaded-file selector and preview header. |
+| Document name | Document review area document list, tab, or selected document panel. |
+| Current document state | Document tab/status indicator and selected document details. |
+| Uploaded file list | Scrollable uploaded-file selector or tabs inside the selected document panel. |
+| Selected uploaded file | Highlighted file entry in uploaded-file selector and preview context. |
 | Applicant comment content | Selected document details, near document state and decision controls. |
 | Document preview | Document preview region beside document controls. |
 | No-preview treatment for `Doesn't exist` | Document preview region, with context pointing to applicant comments. |
 | Reviewer decision controls | Selected document details. |
-| Required reopen comment area | Selected document details, near reopen action. |
+| Required reopen comment input | Selected document details, when the reopen action is active. |
 
 ## Field review placement rules
 

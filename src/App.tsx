@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   EyeOff,
-  FileText,
   FolderCheck,
   MailWarning,
   Maximize2,
@@ -34,8 +33,8 @@ type DocumentItem = {
 
 type UploadedFile = {
   name: string;
-  label: string;
   date: string;
+  time: string;
   selected?: boolean;
 };
 
@@ -111,14 +110,14 @@ const applicantDocuments: DocumentItem[] = [
 const uploadedFiles: UploadedFile[] = [
   {
     name: 'back-id-replacement-2026-06-24.pdf',
-    label: 'Applicant replacement',
     date: '2026-06-24',
+    time: '14:32',
     selected: true,
   },
   {
     name: 'back-id-initial-2026-06-15.pdf',
-    label: 'Initial upload',
     date: '2026-06-15',
+    time: '09:18',
   },
 ];
 
@@ -185,7 +184,21 @@ function StatusPill({ status }: { status: 'Complete' | 'Incomplete' }) {
   );
 }
 
+function DocumentTabStatus({ state }: { state: DocumentState }) {
+  const isVerified = state === 'Verified';
+  const Icon = isVerified ? CheckCircle2 : AlertCircle;
+
+  return (
+    <span className={`document-tab-status ${isVerified ? 'verified' : 'needs-review'}`}>
+      <Icon aria-hidden="true" size={13} />
+      {isVerified ? 'Verified' : 'Needs review'}
+    </span>
+  );
+}
+
 function App() {
+  const selectedDocument = applicantDocuments.find((documentItem) => documentItem.selected) ?? applicantDocuments[0];
+
   return (
     <main className="workspace-shell">
       <section className="app-header" aria-labelledby="application-title">
@@ -249,115 +262,89 @@ function App() {
 
       <section className="entered-workspace" aria-label="Applicant ID workspace">
         <div className="workspace-breadcrumb" aria-label="Group workspace navigation">
-          <button className="back-link" type="button" disabled>
-            <ArrowLeft aria-hidden="true" size={16} />
-            All document groups
-          </button>
-          <span aria-hidden="true">/</span>
-          <strong>Applicant ID</strong>
-          <StatusPill status="Incomplete" />
+          <div className="workspace-breadcrumb-path">
+            <button className="back-link" type="button" disabled>
+              <ArrowLeft aria-hidden="true" size={16} />
+              All document groups
+            </button>
+            <span aria-hidden="true">/</span>
+            <strong>Applicant ID</strong>
+            <StatusPill status="Incomplete" />
+          </div>
+          <div className="summary-chips" aria-label="Selected group status">
+            <span className="summary-chip attention">2 documents need verification</span>
+            <span className="summary-chip attention">2 fields unchecked</span>
+            <span className="summary-chip attention">4 blockers</span>
+          </div>
         </div>
 
         <div className="workspace-content">
-          <section className="selected-summary" aria-labelledby="selected-group-title">
-            <div>
-              <p className="eyebrow">Focused group workspace</p>
-              <h2 id="selected-group-title">Applicant ID</h2>
-              <p className="summary-copy">
-                Expected documents: ID, back of ID, ID appendix. Related fields: first name, last name, ID number,
-                date of birth, marital status, number of children under 18.
-              </p>
-            </div>
-            <div className="summary-chips" aria-label="Selected group status">
-              <span className="summary-chip attention">2 documents need verification</span>
-              <span className="summary-chip attention">2 fields unchecked</span>
-              <span className="summary-chip attention">4 blockers</span>
-            </div>
-          </section>
-
-          <section className="review-layout" aria-label="Selected group evidence review">
-            <div className="document-column">
-              <section className="panel document-panel" aria-labelledby="documents-heading">
-                <div className="section-title-row">
-                  <FileText aria-hidden="true" size={18} />
-                  <h3 id="documents-heading">Document Review</h3>
-                </div>
-
-                <div className="document-list">
-                  {applicantDocuments.map((documentItem) => (
-                    <article className={`document-row ${documentItem.selected ? 'selected' : ''}`} key={documentItem.name}>
-                      <div className="row-header">
-                        <h4>{documentItem.name}</h4>
-                        <StateBadge state={documentItem.state} />
-                      </div>
-                      <p>{documentItem.comment}</p>
-                      <div className="document-meta">
-                        <span>{documentItem.files} uploaded files</span>
-                        {documentItem.selected ? <span>Selected document</span> : null}
-                      </div>
-                      <div className="document-decision" aria-label={`${documentItem.name} decision controls`}>
-                        <div className="control-strip">
-                          <button className="static-button success" type="button" disabled>
-                            <CheckCircle2 aria-hidden="true" size={16} />
-                            Verify
-                          </button>
-                          <button className="static-button warning" type="button" disabled>
-                            <MailWarning aria-hidden="true" size={16} />
-                            Reopen
-                          </button>
-                          <button className="static-button" type="button" disabled>
-                            <EyeOff aria-hidden="true" size={16} />
-                            Doesn't exist
-                          </button>
-                        </div>
-
-                        <label className="static-textarea-label" htmlFor={`reopen-comment-${documentItem.name.replaceAll(' ', '-').toLowerCase()}`}>
-                          Reopen comment for {documentItem.name}
-                        </label>
-                        <textarea
-                          id={`reopen-comment-${documentItem.name.replaceAll(' ', '-').toLowerCase()}`}
-                          className="static-textarea"
-                          value={`Comment required when reopening ${documentItem.name}.`}
-                          readOnly
-                        />
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-
-            </div>
-
-            <section className="panel preview-panel" aria-labelledby="preview-heading">
-              <div className="section-title-row preview-title-row">
-                <div className="preview-title-copy">
-                  <FileText aria-hidden="true" size={18} />
-                  <div>
-                    <h3 id="preview-heading">Document Preview</h3>
-                    <p>back-id-replacement-2026-06-24.pdf · 1 page · Uploaded 2026-06-24</p>
+          <div className="workspace-review-grid">
+            <section className="panel evidence-panel" aria-label="Document evidence">
+              <div className="evidence-control-stack">
+                <div className="evidence-document-row">
+                  <div className="document-tabs" role="tablist" aria-label="Documents for Applicant ID">
+                    {applicantDocuments.map((documentItem) => (
+                      <button
+                        className={`document-tab ${documentItem.selected ? 'selected' : ''}`}
+                        type="button"
+                        role="tab"
+                        aria-selected={documentItem.selected ? 'true' : 'false'}
+                        aria-disabled="true"
+                        key={documentItem.name}
+                      >
+                        <span className="document-tab-copy">
+                          <span className="document-tab-name">{documentItem.name}</span>
+                          <DocumentTabStatus state={documentItem.state} />
+                        </span>
+                      </button>
+                    ))}
                   </div>
                 </div>
-                <button className="static-button preview-fullscreen-button" type="button" disabled>
-                  <Maximize2 aria-hidden="true" size={16} />
-                  View full screen
-                </button>
+
+                <div className="evidence-verification-row" aria-label="Back of ID verification controls">
+                  <div className="selected-document-actions" aria-label="Back of ID decision controls">
+                    <button className="static-button success" type="button" disabled>
+                      <CheckCircle2 aria-hidden="true" size={16} />
+                      Verify
+                    </button>
+                    <button className="static-button warning" type="button" disabled>
+                      <MailWarning aria-hidden="true" size={16} />
+                      Reopen
+                    </button>
+                  </div>
+                  <div className="document-state-summary">
+                    <StateBadge state={selectedDocument.state} />
+                  </div>
+                </div>
+
+                <div className="evidence-file-row">
+                  <div className="file-tabs" role="tablist" aria-label="Uploaded files for Back of ID">
+                    {uploadedFiles.map((uploadedFile) => (
+                      <button
+                        className={`file-tab ${uploadedFile.selected ? 'selected' : ''}`}
+                        type="button"
+                        role="tab"
+                        aria-selected={uploadedFile.selected ? 'true' : 'false'}
+                        aria-disabled="true"
+                        key={uploadedFile.name}
+                      >
+                        <time dateTime={`${uploadedFile.date}T${uploadedFile.time}:00`}>
+                          <span>{uploadedFile.date}</span>
+                          <span>{uploadedFile.time}</span>
+                        </time>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="preview-file-header">
+                    <button className="static-button preview-fullscreen-button" type="button" aria-label="View full screen" disabled>
+                      <Maximize2 aria-hidden="true" size={16} />
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="file-tabs" role="tablist" aria-label="Uploaded files for Back of ID">
-                {uploadedFiles.map((uploadedFile) => (
-                  <button
-                    className={`file-tab ${uploadedFile.selected ? 'selected' : ''}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={uploadedFile.selected ? 'true' : 'false'}
-                    aria-disabled="true"
-                    key={uploadedFile.name}
-                  >
-                    <span>{uploadedFile.label}</span>
-                    <strong>{uploadedFile.name}</strong>
-                    <time dateTime={uploadedFile.date}>{uploadedFile.date}</time>
-                  </button>
-                ))}
-              </div>
+
               <div className="document-preview" aria-label="Static document preview placeholder">
                 <div className="preview-page-header">
                   <span>State of Israel</span>
@@ -374,31 +361,43 @@ function App() {
                 <div className="preview-line medium" />
                 <div className="preview-footer">Readable scan · candidate name visible · ID number visible</div>
               </div>
-            </section>
-          </section>
 
-          <section className="panel field-panel" aria-labelledby="fields-heading">
-            <div className="section-title-row">
-              <PencilLine aria-hidden="true" size={18} />
-              <h3 id="fields-heading">Field Consistency Review</h3>
-            </div>
-
-            <div className="field-list">
-              {applicantFields.map((fieldItem) => (
-                <article className={`field-row ${fieldItem.checked ? 'checked' : 'unchecked'}`} key={fieldItem.label}>
-                  <div className="field-label-block">
-                    <h4>{fieldItem.label}</h4>
-                    <p>{fieldItem.note}</p>
+              <article className="evidence-review-footer" aria-label="Selected document review actions">
+                {selectedDocument.comment ? (
+                  <div className="applicant-comment">
+                    <span>Applicant comment</span>
+                    <p>{selectedDocument.comment}</p>
                   </div>
-                  <div className={`static-input ${fieldItem.edited ? 'edited' : ''}`}>{fieldItem.value}</div>
-                  <label className="checkbox-label">
-                    <input type="checkbox" checked={fieldItem.checked} readOnly />
-                    {fieldItem.checked ? 'Confirmed' : 'Confirm'}
-                  </label>
-                </article>
-              ))}
-            </div>
-          </section>
+                ) : null}
+              </article>
+            </section>
+
+            <section className="panel field-panel" aria-labelledby="fields-heading">
+              <div className="section-title-row field-title-row">
+                <PencilLine aria-hidden="true" size={18} />
+                <div>
+                  <h3 id="fields-heading">Field Verification</h3>
+                  <p>Compare each submitted value against the open document.</p>
+                </div>
+              </div>
+
+              <div className="field-list">
+                {applicantFields.map((fieldItem) => (
+                  <article className={`field-row ${fieldItem.checked ? 'checked' : 'unchecked'}`} key={fieldItem.label}>
+                    <div className="field-label-block">
+                      <h4>{fieldItem.label}</h4>
+                      <p>{fieldItem.note}</p>
+                    </div>
+                    <div className={`static-input ${fieldItem.edited ? 'edited' : ''}`}>{fieldItem.value}</div>
+                    <label className="checkbox-label">
+                      <input type="checkbox" checked={fieldItem.checked} readOnly />
+                      {fieldItem.checked ? 'Confirmed' : 'Confirm'}
+                    </label>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
         </div>
       </section>
     </main>

@@ -26,8 +26,10 @@ Phase 1 is intentionally planning-only. It defines the review flow, workspace st
 The included artifacts cover:
 
 - Reviewer journey from application selection through final group completion.
-- Desktop workspace layout with group navigation, document review, field review, progress, and blockers.
+- Desktop workspace layout with group overview/navigation, document review, field review, progress, and blockers.
 - All five required verification groups and their document-to-field mappings.
 - Placement for applicant comments, uploaded file lists, document previews, document state controls, editable values, and verified checkboxes.
 - Group completion model based on verified documents and explicitly checked fields.
-- Blocker visibility grouped by unverified documents, unchecked fields, and required reopen comments when relevant.
+- Blocker visibility by unverified documents, unchecked fields, no-preview context, and required reopen comments when relevant.
+
+Phase 2 adapted this foundation into the current static UI: a group overview appears before the focused workspace, document items appear as tabs with verification indicators, uploaded files appear as timestamp-only tabs, and selected-group blockers appear as compact status-row counts plus inline document and field indicators.

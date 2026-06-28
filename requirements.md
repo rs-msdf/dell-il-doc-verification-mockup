@@ -91,7 +91,7 @@ Group 5: Applicant Disability Status
 - When a group is selected, missing items for completion must be explicit:
   - Documents not yet Verified.
   - Fields not yet checked as verified.
-- Missing items should be grouped by category, including unverified documents, unchecked fields, and required reopen comments when relevant.
+- Missing items should be visible by category, using compact counts, inline indicators, or detailed lists as appropriate for the phase. Categories include unverified documents, unchecked fields, and required reopen comments when relevant.
 
 ### 9.1 Layout assumption for mockup planning
 - The mockup is desktop-focused.
@@ -110,5 +110,6 @@ Group 5: Applicant Disability Status
 - OCR or ML extraction implementation.
 - Production notification infrastructure implementation.
 
-### 12. Remaining open clarification
-- Confirm whether uploaded file entries need explicit labels for `initial upload`, `applicant replacement`, and `requested correction`, or whether upload date/order is enough for the mockup.
+### 12. Phase 2 clarification
+- Phase 2 uses timestamp-only uploaded-file tabs in the main comparison row to keep the preview area compact.
+- Supporting sample data can still preserve upload labels such as `Initial upload`, `Applicant replacement`, and `requested correction` for traceability and later interactive phases.

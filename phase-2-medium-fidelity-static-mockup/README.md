@@ -2,7 +2,7 @@
 
 This folder contains the detailed Phase 2 plan for creating a static but realistic reviewer workspace for the Dell IL Tech Leaders document verification UI mockup.
 
-Phase 1 is complete enough to proceed because it documents the reviewer journey, desktop workspace structure, verification groups, completion rules, blocker categories, and Stage 2 handoff notes. Phase 2 uses those foundations to plan the static screen, representative data, visual hierarchy, and review checklist before clickable behavior is added in Phase 3.
+Phase 1 is complete because it documents the reviewer journey, desktop workspace structure, verification groups, completion rules, blocker categories, and Stage 2 handoff notes. Phase 2 uses those foundations to define and implement the static screen, representative data, visual hierarchy, and review checklist before clickable behavior is added in Phase 3.
 
 ## Source inputs
 
@@ -28,18 +28,18 @@ Phase 1 is complete enough to proceed because it documents the reviewer journey,
 
 ## Phase 2 outcome
 
-Phase 2 should result in one medium-fidelity static reviewer workspace screen that makes the core verification experience legible:
+Phase 2 is now a completed medium-fidelity static reviewer workspace screen that makes the core verification experience legible:
 
 - Group overview cards show complete versus incomplete status before the reviewer enters a focused group workspace.
-- The opened Applicant ID workspace shows expected supporting documents, current document states, applicant comments, uploaded-file tabs in the preview pane, selected-file preview, application fields, editable inputs, compact field confirmation checkboxes, and inline blocker signals.
+- The opened Applicant ID workspace shows expected supporting documents as document tabs with verification indicators, the selected document state, selected applicant comment, timestamp-only uploaded-file tabs, selected-file preview, application fields, editable inputs, compact field confirmation checkboxes, and inline blocker signals.
 - Representative states are documented in the Phase 2 artifacts, while the UI keeps the primary reviewer workspace free of lower-priority reference panels.
 - The visual hierarchy clearly separates document validity review from field consistency review while keeping both in one coordinated workspace.
 
 ## Confirmed build decisions
 
-- Phase 2 should now produce the actual static UI mockup, not only planning documentation.
+- Phase 2 has produced the actual static UI mockup, not only planning documentation.
 - The static UI should include a group overview and one opened Applicant ID workspace, without the lower-priority reference coverage panels that added clutter.
-- Uploaded files should show explicit labels such as `Initial upload` and `Applicant replacement` to support traceability.
+- Uploaded-file tabs in the main comparison row should show timestamp only; supporting sample data preserves labels such as `Initial upload` and `Applicant replacement` for traceability.
 - The visual style should be loosely Salesforce Lightning-inspired, not a strict Salesforce clone.
 - The mockup should keep the current fictional Dana Levi sample applicant data.
 

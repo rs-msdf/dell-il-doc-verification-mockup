@@ -1,60 +1,62 @@
 # Stage 2 Build Checklist
 
-Use this checklist when building and reviewing the medium-fidelity static mockup.
+Use this checklist when building and reviewing the medium-fidelity static mockup. It reflects the completed Phase 2 static UI and supporting documentation.
 
 ## Required content checklist
 
-- [ ] Phase 2 builds the actual static UI mockup.
-- [ ] Header shows applicant name, application reference, program, and group-count progress.
-- [ ] Progress uses group completion count, such as `2 of 5 groups complete`.
-- [ ] Group overview lists all five verification groups before entering a focused group workspace.
-- [ ] Group overview clearly distinguishes complete and incomplete groups.
-- [ ] Selected group summary shows group name, state, expected documents, related fields, and missing summary.
-- [ ] Document review area shows expected document items for the selected group.
-- [ ] Document rows show document name, current state, applicant comment, and file count when relevant.
-- [ ] Uploaded-file tabs are visible inside the Document Preview pane for a document with multiple files.
-- [ ] Uploaded-file tabs preserve upload history and mark one selected file.
-- [ ] Uploaded-file tabs show explicit upload labels such as `Initial upload` and `Applicant replacement`.
-- [ ] Document preview region shows the selected uploaded file and a `View full screen` affordance.
-- [ ] Field review area shows field labels and current values.
-- [ ] Field values appear editable even though the mockup is static.
-- [ ] Field confirmation checkboxes are separate from editable value controls.
-- [ ] Field rows use compact checkbox labels: `Confirmed` when checked and `Confirm` when unchecked.
-- [ ] Blocker count is visible in the selected group summary.
-- [ ] Document rows make unverified document blockers apparent through document name and current state.
-- [ ] Field rows make unchecked field blockers apparent through field label and unchecked verification state.
-- [ ] Required reopen comment blockers appear next to the relevant reopen action when a reopen state is represented.
-- [ ] The screen omits bottom reference coverage panels so the primary Applicant ID workflow remains visually focused.
+- [x] Phase 2 builds the actual static UI mockup.
+- [x] Header shows applicant name, application reference, program, and group-count progress.
+- [x] Progress uses group completion count, such as `2 of 5 groups complete`.
+- [x] Group overview lists all five verification groups before entering a focused group workspace.
+- [x] Group overview clearly distinguishes complete and incomplete groups.
+- [x] Focused group status row shows group name, state, and missing summary.
+- [x] Document review area shows expected document items for the selected group as document tabs.
+- [x] Document tabs show document name and verification status; the selected document detail shows current state and applicant comment.
+- [x] Uploaded-file tabs are visible inside the Document Preview pane for a document with multiple files.
+- [x] Uploaded-file tabs preserve upload history and mark one selected file.
+- [x] Uploaded-file tabs show only upload timestamps in the main comparison row.
+- [x] Document preview region shows the selected uploaded file and a `View full screen` affordance.
+- [x] Field review area shows field labels and current values.
+- [x] Field values appear editable even though the mockup is static.
+- [x] Field confirmation checkboxes are separate from editable value controls.
+- [x] Field rows use compact checkbox labels: `Confirmed` when checked and `Confirm` when unchecked.
+- [x] Blocker count is visible in the focused group status row.
+- [x] Document tabs and selected document state make unverified document blockers apparent.
+- [x] Field rows make unchecked field blockers apparent through field label and unchecked verification state.
+- [x] Reopen controls do not rely on instructional placeholder text for required comments.
+- [x] `Doesn't exist` is represented as a document state, not as a reviewer action.
+- [x] The screen omits bottom reference coverage panels so the primary Applicant ID workflow remains visually focused.
 
 ## Representative state checklist
 
-- [ ] At least one complete group is shown.
-- [ ] At least one incomplete group is shown.
-- [ ] `Verified` document state is shown.
-- [ ] `Uploaded` document state is shown.
-- [ ] `Reopened` document state is shown.
-- [ ] `Not uploaded` document state is shown.
-- [ ] `Doesn't exist` document state is shown.
-- [ ] Multiple uploaded files for one document item are shown.
-- [ ] Applicant comment is visible for document review.
-- [ ] Checked field state is shown.
-- [ ] Unchecked field state is shown.
-- [ ] Edited field value is visually separate from verification state.
+- [x] At least one complete group is shown.
+- [x] At least one incomplete group is shown.
+- [x] `Verified` document state is shown in the UI.
+- [x] `Uploaded` document state is shown in the UI.
+- [x] `Reopened` document state is covered in supporting sample data.
+- [x] `Not uploaded` document state is represented by document-tab `Needs review` status and supporting sample data.
+- [x] `Doesn't exist` document state is covered in supporting sample data.
+- [x] Multiple uploaded files for one document item are shown.
+- [x] Applicant comment is visible for document review.
+- [x] Checked field state is shown.
+- [x] Unchecked field state is shown.
+- [x] Edited field value is visually separate from verification state.
 
 ## Visual review checklist
 
-- [ ] Styling is loosely Salesforce Lightning-inspired without strictly cloning Salesforce UI.
-- [ ] Document validity review and field consistency review are visually distinct.
-- [ ] Document review and field review are close enough to compare evidence with fields.
-- [ ] The selected group is obvious.
-- [ ] The selected document is obvious.
-- [ ] Completion and incomplete states do not rely on color alone.
-- [ ] Badges and labels are consistent across document states.
-- [ ] Applicant comments do not compete visually with reviewer decision controls.
-- [ ] Preview unavailable states explain why no preview appears.
-- [ ] Blockers are visible in the main workflow without a separate blocker details panel or hidden instructions.
-- [ ] The screen feels like an operational Salesforce-adjacent workspace, not a marketing page.
-- [ ] The fictional Dana Levi sample data remains the default sample content.
+- [x] Styling is loosely Salesforce Lightning-inspired without strictly cloning Salesforce UI.
+- [x] Document validity review and field consistency review are visually distinct.
+- [x] Document review and field review are close enough to compare evidence with fields.
+- [x] The selected document's applicant comment is visible and clearly labeled outside the document tabs.
+- [x] The selected group is obvious.
+- [x] The selected document is obvious.
+- [x] Completion and incomplete states do not rely on color alone.
+- [x] Badges and labels are consistent across document states.
+- [x] Applicant comments do not compete visually with reviewer decision controls.
+- [x] Preview unavailable states are documented in supporting state coverage.
+- [x] Blockers are visible in the main workflow without a separate blocker details panel or hidden instructions.
+- [x] The screen feels like an operational Salesforce-adjacent workspace, not a marketing page.
+- [x] The fictional Dana Levi sample data remains the default sample content.
 
 ## Phase 2 exit review questions
 
@@ -69,7 +71,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 ## Phase 3 handoff notes
 
 - Convert static group overview cards into selectable groups.
-- Convert static document rows and uploaded files into selectable items.
+- Convert static document tabs and uploaded files into selectable items.
 - Implement allowed reviewer document transitions only.
 - Enforce required comments for reopen actions.
 - Preserve field editing separately from the field confirmation checkbox state.

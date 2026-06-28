@@ -16,11 +16,13 @@ Phase 2 should look like a credible reviewer workspace while remaining medium fi
 - Fixed application header at the top of the screen area.
 - Group-first overview before the reviewer enters an individual group.
 - No persistent group navigation pane inside the focused group workspace; use a compact breadcrumb/back affordance instead.
-- Selected group summary at the top of the focused group workspace.
-- Document review and document preview side by side, with field review lower in the focused workflow.
-- Uploaded-file tabs inside the document preview pane, directly above the document display area.
-- Document preview large enough to feel reviewable.
-- Missing items visible without scrolling away from the selected group summary when possible.
+- Compact focused group status row at the top of the focused group workspace.
+- Combined document evidence pane on the left, with field verification in a right-side rail.
+- Document-type tabs should be prominent, left-aligned, and should replace the visible evidence-pane heading.
+- Uploaded-file tabs inside the document evidence pane, showing only upload date and time directly above the document display area.
+- Document preview large enough to feel reviewable and visually prioritized over secondary controls.
+- Decision controls should sit on the left and document status on the right between the document-type tabs and uploaded-file timestamp tabs; applicant comments can sit below the preview.
+- Missing items visible in the focused status row when possible.
 
 ## Suggested spacing and sizing
 
@@ -28,9 +30,9 @@ Phase 2 should look like a credible reviewer workspace while remaining medium fi
 | --- | --- |
 | Workspace max width | Use the available desktop viewport; avoid narrow centered page composition. |
 | Group overview cards | Five visible cards across the desktop workspace where possible. |
-| Document review column | Approximately 34-40 percent of remaining width. |
-| Field review column | Approximately 30-36 percent of remaining width. |
-| Preview region | Large enough to inspect a document surface, at least 360 px tall in the static mockup. |
+| Document evidence pane | Majority of the remaining width, large enough to keep prominent document tabs, compact verification controls, file timestamp tabs, applicant comment footer, and preview together. |
+| Field review rail | Approximately 30-36 percent of remaining width. |
+| Preview region | Large enough to inspect a document surface, at least 560 px tall on desktop when paired with the field review rail. |
 | Border radius | 4-8 px for panels, rows, and badges. |
 | Section spacing | Tight enough for operational scanning, with clear grouping between regions. |
 
@@ -51,25 +53,25 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 
 ## Document review treatment
 
-- Document rows should include document name, state badge, file count, and applicant comment snippet.
-- The selected document should have a clear row selection treatment.
-- Decision controls should appear near the selected document details.
-- Reopen comment area can be visible as a disabled/static text area placeholder.
+- Document tabs should include the document name and a verification indicator such as `Verified` or `Needs review`.
+- The selected document should have a clear tab selection treatment and a detailed state badge in the verification row.
+- Decision controls should appear as the CTA group in the verification row above the preview.
+- Do not show `Doesn't exist` as a reviewer action; represent it only as a document state.
 - Applicant comments should be visually distinct from reviewer decision controls.
 
 ## Uploaded-file tab treatment
 
-- Show uploaded files as compact tabs with filename, upload date, and upload reason label.
+- Show uploaded files as compact tabs with upload date and time only in the main comparison row.
 - Mark the selected file clearly and align it with the preview surface below.
 - Use horizontal overflow treatment so the pattern can scale beyond the two static entries.
 - Preserve upload history instead of replacing older submissions visually.
 
 ## Preview treatment
 
-- Use a document-like preview surface with filename and metadata in the preview header.
-- Place uploaded-file tabs between the preview header and the document surface so it is clear which file controls the visible preview.
+- Use a document-like preview surface without repeating filename metadata above the display.
+- Place uploaded-file tabs directly above the document surface so it is clear which file controls the visible preview.
 - For uploaded files, show a light page canvas with document-like content blocks.
-- Include a compact `View full screen` action in the preview header so reviewers can identify the larger-inspection path.
+- Include a compact icon-only `View full screen` action beside the uploaded-file timestamp tabs so reviewers can identify the larger-inspection path.
 - For `Doesn't exist`, show an empty preview state that points the reviewer to applicant comments and group context.
 - For `Not uploaded`, show preview unavailable because no file exists.
 - Do not make the preview look decorative or generic; it should clearly support evidence inspection.
@@ -84,11 +86,11 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 ## Blocker treatment
 
 - Do not add a standalone blocker details panel in the Phase 2 static UI.
-- Use the selected-group summary for compact blocker counts and missing-work totals.
-- Make unverified document blockers apparent through document names and current-state badges in document rows.
+- Use the focused group status row for compact blocker counts and missing-work totals.
+- Make unverified document blockers apparent through document tab indicators and the selected document's current-state badge.
 - Make unchecked field blockers apparent through field labels and unchecked verification controls in field rows.
 - Include no-preview context as document review context, not always as a completion blocker.
-- Include required reopen comment blockers next to the relevant reopen action when a reopen state is represented.
+- Do not add instructional reopen-comment placeholder text; validation should be handled by the UI flow when the action becomes interactive.
 
 ## Accessibility and readability
 

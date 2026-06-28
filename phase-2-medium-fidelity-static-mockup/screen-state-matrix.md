@@ -8,17 +8,18 @@ This matrix identifies where each required Phase 2 state should appear in the st
 | --- | --- |
 | Complete versus incomplete group status | Group overview cards show Applicant ID incomplete, Parent 1 complete, Parent 2 incomplete, Applicant Income incomplete, Applicant Disability Status complete. |
 | Group progress count | Header shows `2 of 5 groups complete`. |
-| Expected supporting documents | Applicant ID summary lists ID, back of ID, ID appendix. |
-| Current document states | Applicant ID document rows show `Verified`, `Uploaded`, and `Not uploaded`. |
+| Expected supporting documents | Applicant ID document tabs list ID, back of ID, ID appendix. |
+| Document-tab verification indicators | Applicant ID document tabs show `Verified` on ID and `Needs review` on Back of ID and ID appendix. |
+| Current document states | Applicant ID document tabs show `Verified` or `Needs review`; the selected Back of ID detail shows `Uploaded`; supporting sample data covers ID as `Verified` and ID appendix as `Not uploaded`. |
 | Uploaded-file tabs | Back of ID selected with two files shown as tabs above the document preview. |
 | Selected uploaded file | `back-id-replacement-2026-06-24.pdf` marked selected. |
-| Applicant comments | Visible on all Applicant ID document rows or selected document details. |
+| Applicant comments | Visible in selected document details; comments for all document items are retained in sample data. |
 | Document preview | Back of ID selected file preview shown with a static `View full screen` affordance. |
 | Current field values | Six Applicant ID fields shown with current values. |
 | Editable field inputs | All field values appear in input-like controls. |
 | Separate field confirmation checkboxes | Each field row has its own confirmation checkbox separate from the input. |
-| Unchecked fields obvious | Date of birth and marital status show unchecked `Confirm` boxes and are counted in the selected-group summary. |
-| Missing completion items | Summary chips, document states, and unchecked field rows expose two unverified documents and two unchecked fields. |
+| Unchecked fields obvious | Date of birth and marital status show unchecked `Confirm` boxes and are counted in the focused group status row. |
+| Missing completion items | Focused status-row chips, document-tab indicators, selected document state, and unchecked field rows expose two unverified documents and two unchecked fields. |
 
 ## Supporting static states across all groups
 

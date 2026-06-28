@@ -56,6 +56,8 @@ This sample data plan gives Phase 2 enough realistic content to build a medium-f
 
 The static screen only needs to show selected state for the selected document item. Other files can appear in supporting static examples or sample-data notes.
 
+The current Phase 2 UI shows uploaded-file tabs with timestamp only in the main comparison row. The `Upload label` column remains in sample data so later interactive phases can restore explicit file-history reasons if stakeholders need them.
+
 ## Application field data
 
 | Group | Field | Current value | Static verification state | Notes |

@@ -1,6 +1,6 @@
 # Blocker Visibility Model
 
-The selected group view must make incomplete work explicit. Reviewers should not need to infer blockers by manually scanning every document and field row.
+The selected group view must make incomplete work explicit. Reviewers should not need to infer blockers only by manually scanning every document and field row.
 
 ## Blocker categories
 
@@ -13,14 +13,14 @@ The selected group view must make incomplete work explicit. Reviewers should not
 
 ## Selected group blocker display
 
-The blocker area appears with the selected group summary or as a nearby right-side summary panel. It should show blockers grouped by category in a stable order:
+The blocker display appears with the selected group summary, focused status row, or a nearby detail panel. It should expose blocker categories in a stable order, either as compact counts or as detailed lists:
 
 1. Unverified documents.
 2. Unchecked fields.
 3. No-preview or applicant-comment-only context.
 4. Required reopen comments when relevant.
 
-Example structure:
+Example detailed structure for later phases:
 
 ```text
 Missing items for Applicant ID
@@ -42,7 +42,7 @@ Required reopen comments
 
 ## Group navigation status
 
-The persistent group navigation must show complete versus incomplete state at a glance.
+The group overview/navigation must show complete versus incomplete state at a glance.
 
 Minimum Phase 1 status treatment:
 
@@ -55,7 +55,7 @@ Optional later enhancement:
 
 | Enhancement | Purpose |
 | --- | --- |
-| Blocker count, such as `3 blockers` | Helps reviewers choose the next group without opening each group. |
+| Blocker count, such as `3 blockers` | Helps reviewers choose the next group without opening each group. Phase 2 uses this in the group overview. |
 
 ## Blocker calculation model
 

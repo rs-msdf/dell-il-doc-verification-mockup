@@ -45,7 +45,7 @@ Create a static but realistic reviewer workspace that demonstrates the core veri
 - For the selected group, display:
   - Expected supporting documents.
   - Current document states.
-  - Scrollable uploaded-file list when multiple files exist for one document type.
+  - Uploaded-file tabs when multiple files exist for one document type.
   - Applicant comments per document.
   - Document preview for the selected uploaded file when a file exists.
   - No preview for `Doesn't exist` documents.
@@ -59,6 +59,7 @@ Create a static but realistic reviewer workspace that demonstrates the core veri
 - Static mockup of the main verification workspace.
 - Representative examples of complete, incomplete, reopened, uploaded, verified, not uploaded, and doesn't-exist states.
 - Visual treatment for progress, blockers, comments, and decision states.
+- Current Phase 2 status: completed as a Vite + React + TypeScript static UI with supporting documentation.
 
 ### Exit criteria
 - A reviewer can visually distinguish document review tasks from field consistency tasks.
@@ -150,8 +151,7 @@ Deliver an interactive mockup with full front-end functionality for the defined 
 - Stateful sample application data covering 10-20 documents.
 - Functional group progress and blocker calculations.
 - Functional reopen comment validation and simulated notification feedback.
-- Notes documenting open questions that remain outside the mockup, including:
-  - Whether uploaded file entries need explicit labels for initial upload, applicant replacement, and requested correction.
+- Notes documenting remaining production or stakeholder questions outside the mockup.
 
 ### Exit criteria
 - A reviewer can complete an end-to-end mock verification session in the prototype.
