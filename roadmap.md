@@ -112,6 +112,7 @@ Use the completed Phase 3 prototype as the review artifact for stakeholder feedb
 - Identify production-only questions that should not be solved inside the mockup, such as persistence, notification infrastructure, audit history, permissions, and integration with uploaded file storage.
 
 ### Deliverables
+- Detailed Phase 4 planning documentation in `phase-4-ux-hardening-lwc-readiness/`.
 - Stakeholder UX review notes using the completed Phase 3 prototype.
 - Density, accessibility, and responsive review checklist.
 - Refined component inventory aligned with likely LWC implementation boundaries.
