@@ -7,24 +7,24 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - [ ] Phase 2 builds the actual static UI mockup.
 - [ ] Header shows applicant name, application reference, program, and group-count progress.
 - [ ] Progress uses group completion count, such as `2 of 5 groups complete`.
-- [ ] Left navigation lists all five verification groups.
-- [ ] Group navigation clearly distinguishes complete and incomplete groups.
+- [ ] Group overview lists all five verification groups before entering a focused group workspace.
+- [ ] Group overview clearly distinguishes complete and incomplete groups.
 - [ ] Selected group summary shows group name, state, expected documents, related fields, and missing summary.
 - [ ] Document review area shows expected document items for the selected group.
 - [ ] Document rows show document name, current state, applicant comment, and file count when relevant.
 - [ ] Uploaded-file list is visible for a document with multiple files.
 - [ ] Uploaded-file list preserves upload history and marks one selected file.
 - [ ] Uploaded-file entries show explicit upload labels such as `Initial upload` and `Applicant replacement`.
-- [ ] Document preview region shows the selected uploaded file.
+- [ ] Document preview region shows the selected uploaded file and a `View full screen` affordance.
 - [ ] No-preview treatment is represented for `Doesn't exist` or no-file conditions.
 - [ ] Field review area shows field labels and current values.
 - [ ] Field values appear editable even though the mockup is static.
 - [ ] Verified checkboxes are separate from editable value controls.
 - [ ] Unchecked fields are visibly unverified.
-- [ ] Blockers are grouped by category.
-- [ ] Blockers list unverified documents by document name and current state.
-- [ ] Blockers list unchecked fields by field label.
-- [ ] Blockers include required reopen comments when a reopen state is represented.
+- [ ] Blocker count is visible in the selected group summary.
+- [ ] Document rows make unverified document blockers apparent through document name and current state.
+- [ ] Field rows make unchecked field blockers apparent through field label and unchecked verification state.
+- [ ] Required reopen comment blockers appear next to the relevant reopen action when a reopen state is represented.
 - [ ] Supporting static panels show Parent 2 ID, Applicant Income, and Applicant Disability Status state examples.
 
 ## Representative state checklist
@@ -53,7 +53,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - [ ] Badges and labels are consistent across document states.
 - [ ] Applicant comments do not compete visually with reviewer decision controls.
 - [ ] Preview unavailable states explain why no preview appears.
-- [ ] The blocker list is visible without hidden instructions.
+- [ ] Blockers are visible in the main workflow without a separate blocker details panel or hidden instructions.
 - [ ] The screen feels like an operational Salesforce-adjacent workspace, not a marketing page.
 - [ ] The fictional Dana Levi sample data remains the default sample content.
 
@@ -70,7 +70,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 
 ## Phase 3 handoff notes
 
-- Convert static group navigation into selectable groups.
+- Convert static group overview cards into selectable groups.
 - Convert static document rows and uploaded files into selectable items.
 - Implement allowed reviewer document transitions only.
 - Enforce required comments for reopen actions.

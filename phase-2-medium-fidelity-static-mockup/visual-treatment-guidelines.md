@@ -14,9 +14,10 @@ Phase 2 should look like a credible reviewer workspace while remaining medium fi
 ## Layout principles
 
 - Fixed application header at the top of the screen area.
-- Persistent group navigation on the left.
-- Selected group summary at the top of the main workspace.
-- Document review and field review side by side.
+- Group-first overview before the reviewer enters an individual group.
+- No persistent group navigation pane inside the focused group workspace; use a compact breadcrumb/back affordance instead.
+- Selected group summary at the top of the focused group workspace.
+- Document review and document preview side by side, with field review lower in the focused workflow.
 - Uploaded file list adjacent to document review.
 - Document preview large enough to feel reviewable.
 - Missing items visible without scrolling away from the selected group summary when possible.
@@ -26,7 +27,7 @@ Phase 2 should look like a credible reviewer workspace while remaining medium fi
 | Element | Guidance |
 | --- | --- |
 | Workspace max width | Use the available desktop viewport; avoid narrow centered page composition. |
-| Left navigation | Approximately 240-280 px. |
+| Group overview cards | Five visible cards across the desktop workspace where possible. |
 | Document review column | Approximately 34-40 percent of remaining width. |
 | Field review column | Approximately 30-36 percent of remaining width. |
 | Preview region | Large enough to inspect a document surface, at least 360 px tall in the static mockup. |
@@ -67,6 +68,7 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 
 - Use a document-like preview surface with filename and metadata in the preview header.
 - For uploaded files, show a light page canvas with document-like content blocks.
+- Include a compact `View full screen` action in the preview header so reviewers can identify the larger-inspection path.
 - For `Doesn't exist`, show an empty preview state that points the reviewer to applicant comments and group context.
 - For `Not uploaded`, show preview unavailable because no file exists.
 - Do not make the preview look decorative or generic; it should clearly support evidence inspection.
@@ -80,12 +82,12 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 
 ## Blocker treatment
 
-- Use a compact summary block grouped by blocker category.
-- Put the blocker area close to the selected group summary or in a persistent lower region.
-- Include document names and current states for unverified documents.
-- Include field labels for unchecked fields.
-- Include no-preview context as review context, not always as a completion blocker.
-- Include required reopen comments when a reopen action is represented.
+- Do not add a standalone blocker details panel in the Phase 2 static UI.
+- Use the selected-group summary for compact blocker counts and missing-work totals.
+- Make unverified document blockers apparent through document names and current-state badges in document rows.
+- Make unchecked field blockers apparent through field labels and unchecked verification controls in field rows.
+- Include no-preview context as document review context, not always as a completion blocker.
+- Include required reopen comment blockers next to the relevant reopen action when a reopen state is represented.
 
 ## Accessibility and readability
 

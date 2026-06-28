@@ -2,14 +2,14 @@
 
 ## Primary static screen
 
-The Phase 2 mockup should be one desktop reviewer workspace screen. The default selected group should be `Applicant ID` because it has the richest field set and enough document variety to show the grouped workflow clearly.
+The Phase 2 mockup should be one desktop reviewer workspace flow shown statically: a group overview followed by the opened `Applicant ID` workspace. Applicant ID remains the opened group because it has the richest field set and enough document variety to show the grouped workflow clearly.
 
 The screen should be medium fidelity: realistic hierarchy, spacing, labels, statuses, and representative content, but no functional interactions.
 
 Confirmed build direction:
 
 - Build the actual static UI for Phase 2 now.
-- Use one main Applicant ID workspace screen plus supporting static panels for other group states.
+- Use a group overview, one opened Applicant ID workspace, and supporting static panels for other group states.
 - Keep the fictional Dana Levi sample data.
 - Use explicit uploaded-file labels for traceability.
 - Keep the style loosely Salesforce Lightning-inspired rather than a strict Salesforce clone.
@@ -18,21 +18,19 @@ Confirmed build direction:
 
 ```text
 +------------------------------------------------------------------------------------------------+
-| Application Header                                                                              |
-| Dana Levi | Application APP-2026-0148 | Dell IL Tech Leaders | Progress: 2 of 5 groups complete |
-+------------------------+-------------------------------------------------------------------------+
-| Group Navigation       | Selected Group Summary                                                  |
-| Applicant ID           | Applicant ID | Incomplete | 2 unverified docs | 2 unchecked fields     |
-| Parent 1 ID            +--------------------------------------+----------------------------------+
-| Parent 2 ID            | Document Review                      | Field Consistency Review         |
-| Applicant Income       | Expected documents and selected doc  | Field rows with editable inputs  |
-| Applicant Disability   | Applicant comments and controls      | Separate verified checkboxes     |
-|                        +--------------------------------------+----------------------------------+
-|                        | Uploaded Files                       | Document Preview                 |
-|                        | Selected file plus prior submissions | Preview or no-preview treatment  |
-+------------------------+--------------------------------------+----------------------------------+
-| Missing Items / Blockers                                                                        |
-| Unverified documents | Unchecked fields | Reopen comments and no-preview context                    |
+| Group Overview                                                                                  |
+| Applicant ID | Parent 1 ID | Parent 2 ID | Applicant Income | Applicant Disability Status         |
+| Status, document progress, field progress, and blocker count per group                           |
++------------------------------------------------------------------------------------------------+
+| All document groups / Applicant ID                                                              |
++------------------------------------------------------------------------------------------------+
+| Applicant ID Summary | 2 documents need verification | 2 fields unchecked | 4 blockers          |
++------------------------------------------------------------------------------------------------+
+| Document Review + Uploaded Files              | Document Preview                                |
+| Expected documents, comments, controls         | Selected file review surface                    |
++----------------------------------------------+-------------------------------------------------+
+| Field Consistency Review                                                                          |
+| Field rows with editable inputs and separate verified checkboxes                                  |
 +------------------------------------------------------------------------------------------------+
 ```
 
@@ -54,9 +52,9 @@ Visual priority:
 - Progress is visible on the right as a badge or compact progress text.
 - Do not use a percentage as the primary progress indicator.
 
-## Group navigation
+## Group overview navigation
 
-The left navigation should list all five groups with status markers.
+The group overview should list all five groups with status markers before the reviewer enters a focused group workspace.
 
 Recommended static statuses:
 
@@ -78,9 +76,9 @@ For the selected `Applicant ID` group, show:
 - Group state: Incomplete.
 - Expected documents: ID, back of ID, ID appendix.
 - Related fields: first name, last name, ID number, date of birth, marital status, number of children under 18.
-- Missing summary: `2 documents need verification`, `2 fields unchecked`.
+- Missing summary: `2 documents need verification`, `2 fields unchecked`, `4 blockers`.
 
-The summary should make blockers visible before the reviewer scans the full document and field areas.
+The summary should make the total missing work visible before the reviewer scans the full document and field areas. Specific blockers should remain visible on the affected document and field rows.
 
 ## Document review area
 
@@ -122,7 +120,7 @@ For the Phase 2 build, explicit upload labels are confirmed and should be includ
 
 For the selected `Back of ID` file, show a document-preview placeholder that feels like an actual evidence area:
 
-- Preview header with selected filename.
+- Preview header with selected filename and a `View full screen` button.
 - Page surface with realistic text blocks or document-like placeholder zones.
 - Basic metadata, such as page count or uploaded date.
 - Preview unavailable state shown in another static example for `Doesn't exist` or `Not uploaded` documents.
@@ -146,25 +144,13 @@ Each row must show the editable value control separately from the verified check
 
 ## Missing items / blockers
 
-For the selected `Applicant ID` group, show blockers grouped by category:
+For the selected `Applicant ID` group, do not add a separate `Blocker Details` panel. Blockers should be apparent from the workflow UI itself:
 
-Unverified documents:
-
-- Back of ID: `Uploaded`.
-- ID appendix: `Not uploaded`.
-
-Unchecked fields:
-
-- Date of birth.
-- Marital status.
-
-Review context:
-
-- ID appendix has no preview because no file has been uploaded.
-
-Required reopen comments:
-
-- None currently pending for Applicant ID.
+- The selected summary shows `4 blockers` alongside the document and field missing summaries.
+- Document rows expose unverified document blockers through their current states: Back of ID as `Uploaded` and ID appendix as `Not uploaded`.
+- Field rows expose unchecked field blockers through their unchecked verified checkboxes.
+- No-preview context remains attached to the relevant document or supporting static state instead of appearing in a separate blocker block.
+- Required reopen comment blockers should appear next to the relevant reopen action when a reopen state is represented.
 
 ## Static-only controls
 
@@ -175,7 +161,7 @@ Controls should look like real controls but should not imply interactivity in Ph
 - Reopen comment input.
 - Field editable inputs.
 - Field verified checkboxes.
-- Group navigation rows.
+- Group overview cards.
 
 Phase 3 will make these controls clickable and stateful.
 

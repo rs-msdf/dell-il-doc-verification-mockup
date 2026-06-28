@@ -30,15 +30,15 @@ Phase 1 is complete enough to proceed because it documents the reviewer journey,
 
 Phase 2 should result in one medium-fidelity static reviewer workspace screen that makes the core verification experience legible:
 
-- Group navigation shows complete versus incomplete status.
-- The selected group shows expected supporting documents, current document states, applicant comments, uploaded-file list, selected-file preview, application fields, editable inputs, verified checkboxes, and blockers.
+- Group overview cards show complete versus incomplete status before the reviewer enters a focused group workspace.
+- The opened Applicant ID workspace shows expected supporting documents, current document states, applicant comments, uploaded-file list, selected-file preview, application fields, editable inputs, verified checkboxes, and inline blocker signals.
 - Representative states are visible somewhere in the screen or supporting static examples.
 - The visual hierarchy clearly separates document validity review from field consistency review while keeping both in one coordinated workspace.
 
 ## Confirmed build decisions
 
 - Phase 2 should now produce the actual static UI mockup, not only planning documentation.
-- The static UI should include one main Applicant ID workspace screen plus supporting static panels for other group states.
+- The static UI should include a group overview, one opened Applicant ID workspace, and supporting static panels for other group states.
 - Uploaded files should show explicit labels such as `Initial upload` and `Applicant replacement` to support traceability.
 - The visual style should be loosely Salesforce Lightning-inspired, not a strict Salesforce clone.
 - The mockup should keep the current fictional Dana Levi sample applicant data.

@@ -1,13 +1,14 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   AlertCircle,
+  ArrowLeft,
   CheckCircle2,
-  Clock3,
   EyeOff,
   FileText,
   FolderCheck,
   Info,
   MailWarning,
+  Maximize2,
   PencilLine,
   Upload,
   UserRound,
@@ -218,7 +219,7 @@ function StateBadge({ state }: { state: DocumentState }) {
 }
 
 function StatusPill({ status }: { status: 'Complete' | 'Incomplete' }) {
-  const Icon = status === 'Complete' ? CheckCircle2 : Clock3;
+  const Icon = status === 'Complete' ? CheckCircle2 : AlertCircle;
 
   return (
     <span className={`status-pill ${status === 'Complete' ? 'complete' : 'incomplete'}`}>
@@ -248,50 +249,77 @@ function App() {
         </div>
       </section>
 
-      <section className="workspace-grid" aria-label="Document verification workspace">
-        <aside className="group-navigation" aria-label="Verification groups">
-          <div className="section-title-row">
-            <FolderCheck aria-hidden="true" size={18} />
-            <h2>Groups</h2>
+      <section className="group-overview" aria-labelledby="group-overview-title">
+        <div className="group-overview-header">
+          <div>
+            <p className="eyebrow">Start here</p>
+            <h2 id="group-overview-title">Document groups</h2>
+            <p className="summary-copy">Choose a group to review. Each group opens into its own focused workspace.</p>
           </div>
+          <span className="progress-pill">Applicant ID opened below</span>
+        </div>
 
-          <div className="group-list">
-            {groupSummaries.map((groupSummary) => (
-              <div className={`group-row ${groupSummary.selected ? 'selected' : ''}`} key={groupSummary.name}>
-                <div className="group-row-main">
-                  <span className="group-name">{groupSummary.name}</span>
-                  <StatusPill status={groupSummary.status} />
+        <div className="group-card-grid" aria-label="Verification groups">
+          {groupSummaries.map((groupSummary) => (
+            <article className={`group-card ${groupSummary.selected ? 'selected' : ''}`} key={groupSummary.name}>
+              <div className="group-card-header">
+                <div className="group-card-title">
+                  <FolderCheck aria-hidden="true" size={18} />
+                  <h3>{groupSummary.name}</h3>
                 </div>
-                <div className="group-row-meta">
-                  <span>Docs {groupSummary.documentsComplete}</span>
-                  <span>Fields {groupSummary.fieldsComplete}</span>
+                <StatusPill status={groupSummary.status} />
+              </div>
+
+              <div className="group-card-metrics">
+                <div>
+                  <span>Documents</span>
+                  <strong>{groupSummary.documentsComplete}</strong>
                 </div>
-                <div className="blocker-count">
-                  {groupSummary.blockers === 0 ? 'No blockers' : `${groupSummary.blockers} blockers`}
+                <div>
+                  <span>Fields</span>
+                  <strong>{groupSummary.fieldsComplete}</strong>
                 </div>
               </div>
-            ))}
-          </div>
-        </aside>
+
+              <div className={`group-card-blockers ${groupSummary.blockers > 0 ? 'needs-attention' : ''}`}>
+                {groupSummary.blockers === 0 ? 'No blockers' : `${groupSummary.blockers} blockers`}
+              </div>
+
+              {groupSummary.selected ? <div className="group-card-action">Opened in workspace</div> : null}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="entered-workspace" aria-label="Applicant ID workspace">
+        <div className="workspace-breadcrumb" aria-label="Group workspace navigation">
+          <button className="back-link" type="button" disabled>
+            <ArrowLeft aria-hidden="true" size={16} />
+            All document groups
+          </button>
+          <span aria-hidden="true">/</span>
+          <strong>Applicant ID</strong>
+          <StatusPill status="Incomplete" />
+        </div>
 
         <div className="workspace-content">
           <section className="selected-summary" aria-labelledby="selected-group-title">
             <div>
-              <p className="eyebrow">Selected group</p>
+              <p className="eyebrow">Focused group workspace</p>
               <h2 id="selected-group-title">Applicant ID</h2>
               <p className="summary-copy">
                 Expected documents: ID, back of ID, ID appendix. Related fields: first name, last name, ID number,
                 date of birth, marital status, number of children under 18.
               </p>
             </div>
-            <div className="summary-metrics" aria-label="Selected group status">
-              <StatusPill status="Incomplete" />
-              <span>2 documents need verification</span>
-              <span>2 fields unchecked</span>
+            <div className="summary-chips" aria-label="Selected group status">
+              <span className="summary-chip attention">2 documents need verification</span>
+              <span className="summary-chip attention">2 fields unchecked</span>
+              <span className="summary-chip attention">4 blockers</span>
             </div>
           </section>
 
-          <section className="review-layout" aria-label="Selected group review details">
+          <section className="review-layout" aria-label="Selected group evidence review">
             <div className="document-column">
               <section className="panel document-panel" aria-labelledby="documents-heading">
                 <div className="section-title-row">
@@ -311,30 +339,35 @@ function App() {
                         <span>{documentItem.files} uploaded files</span>
                         {documentItem.selected ? <span>Selected document</span> : null}
                       </div>
+                      <div className="document-decision" aria-label={`${documentItem.name} decision controls`}>
+                        <div className="control-strip">
+                          <button className="static-button success" type="button" disabled>
+                            <CheckCircle2 aria-hidden="true" size={16} />
+                            Verify
+                          </button>
+                          <button className="static-button warning" type="button" disabled>
+                            <MailWarning aria-hidden="true" size={16} />
+                            Reopen
+                          </button>
+                          <button className="static-button" type="button" disabled>
+                            <EyeOff aria-hidden="true" size={16} />
+                            Doesn't exist
+                          </button>
+                        </div>
+
+                        <label className="static-textarea-label" htmlFor={`reopen-comment-${documentItem.name.replaceAll(' ', '-').toLowerCase()}`}>
+                          Reopen comment for {documentItem.name}
+                        </label>
+                        <textarea
+                          id={`reopen-comment-${documentItem.name.replaceAll(' ', '-').toLowerCase()}`}
+                          className="static-textarea"
+                          value={`Comment required when reopening ${documentItem.name}.`}
+                          readOnly
+                        />
+                      </div>
                     </article>
                   ))}
                 </div>
-
-                <div className="control-strip" aria-label="Static document decision controls">
-                  <button className="static-button success" type="button" disabled>
-                    <CheckCircle2 aria-hidden="true" size={16} />
-                    Verify
-                  </button>
-                  <button className="static-button warning" type="button" disabled>
-                    <MailWarning aria-hidden="true" size={16} />
-                    Reopen
-                  </button>
-                </div>
-
-                <label className="static-textarea-label" htmlFor="reopen-comment">
-                  Reopen comment
-                </label>
-                <textarea
-                  id="reopen-comment"
-                  className="static-textarea"
-                  value="Comment required when reopening a document."
-                  readOnly
-                />
               </section>
 
               <section className="panel file-panel" aria-labelledby="files-heading">
@@ -358,11 +391,17 @@ function App() {
 
             <section className="panel preview-panel" aria-labelledby="preview-heading">
               <div className="section-title-row preview-title-row">
-                <FileText aria-hidden="true" size={18} />
-                <div>
-                  <h3 id="preview-heading">Document Preview</h3>
-                  <p>back-id-replacement-2026-06-24.pdf · 1 page · Uploaded 2026-06-24</p>
+                <div className="preview-title-copy">
+                  <FileText aria-hidden="true" size={18} />
+                  <div>
+                    <h3 id="preview-heading">Document Preview</h3>
+                    <p>back-id-replacement-2026-06-24.pdf · 1 page · Uploaded 2026-06-24</p>
+                  </div>
                 </div>
+                <button className="static-button preview-fullscreen-button" type="button" disabled>
+                  <Maximize2 aria-hidden="true" size={16} />
+                  View full screen
+                </button>
               </div>
               <div className="document-preview" aria-label="Static document preview placeholder">
                 <div className="preview-page-header">
@@ -381,75 +420,40 @@ function App() {
                 <div className="preview-footer">Readable scan · candidate name visible · ID number visible</div>
               </div>
             </section>
-
-            <section className="panel field-panel" aria-labelledby="fields-heading">
-              <div className="section-title-row">
-                <PencilLine aria-hidden="true" size={18} />
-                <h3 id="fields-heading">Field Consistency Review</h3>
-              </div>
-
-              <div className="field-list">
-                {applicantFields.map((fieldItem) => (
-                  <article className={`field-row ${fieldItem.checked ? 'checked' : 'unchecked'}`} key={fieldItem.label}>
-                    <div className="field-label-block">
-                      <h4>{fieldItem.label}</h4>
-                      <p>{fieldItem.note}</p>
-                    </div>
-                    <div className={`static-input ${fieldItem.edited ? 'edited' : ''}`}>{fieldItem.value}</div>
-                    <label className="checkbox-label">
-                      <input type="checkbox" checked={fieldItem.checked} readOnly />
-                      Verified
-                    </label>
-                  </article>
-                ))}
-              </div>
-            </section>
           </section>
 
-          <section className="blockers-panel" aria-labelledby="blockers-heading">
+          <section className="panel field-panel" aria-labelledby="fields-heading">
             <div className="section-title-row">
-              <AlertCircle aria-hidden="true" size={18} />
-              <h3 id="blockers-heading">Missing Items / Blockers</h3>
+              <PencilLine aria-hidden="true" size={18} />
+              <h3 id="fields-heading">Field Consistency Review</h3>
             </div>
-            <div className="blocker-grid">
-              <div className="blocker-column">
-                <h4>Unverified documents</h4>
-                <ul>
-                  <li>Back of ID: Uploaded</li>
-                  <li>ID appendix: Not uploaded</li>
-                </ul>
-              </div>
-              <div className="blocker-column">
-                <h4>Unchecked fields</h4>
-                <ul>
-                  <li>Date of birth</li>
-                  <li>Marital status</li>
-                </ul>
-              </div>
-              <div className="blocker-column">
-                <h4>Review context</h4>
-                <ul>
-                  <li>ID appendix has no preview because no file has been uploaded.</li>
-                </ul>
-              </div>
-              <div className="blocker-column">
-                <h4>Required reopen comments</h4>
-                <ul>
-                  <li>None currently pending for Applicant ID.</li>
-                </ul>
-              </div>
+
+            <div className="field-list">
+              {applicantFields.map((fieldItem) => (
+                <article className={`field-row ${fieldItem.checked ? 'checked' : 'unchecked'}`} key={fieldItem.label}>
+                  <div className="field-label-block">
+                    <h4>{fieldItem.label}</h4>
+                    <p>{fieldItem.note}</p>
+                  </div>
+                  <div className={`static-input ${fieldItem.edited ? 'edited' : ''}`}>{fieldItem.value}</div>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={fieldItem.checked} readOnly />
+                    Verified
+                  </label>
+                </article>
+              ))}
             </div>
           </section>
         </div>
       </section>
 
-      <section className="supporting-section" aria-labelledby="supporting-heading">
+      <section className="supporting-section supporting-section-reference" aria-labelledby="supporting-heading">
         <div className="supporting-header">
           <div>
-            <p className="eyebrow">Other groups</p>
-            <h2 id="supporting-heading">Verification Snapshot</h2>
+            <p className="eyebrow">Reference coverage</p>
+            <h2 id="supporting-heading">Other Static Group States</h2>
           </div>
-          <p>Open items and complete examples across the remaining verification groups.</p>
+          <p>Lower-priority examples preserve the required reopened, doesn't-exist, and complete-group states.</p>
         </div>
         <div className="supporting-grid">
           {supportingPanels.map((panel) => (

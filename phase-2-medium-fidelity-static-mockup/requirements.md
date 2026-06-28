@@ -48,7 +48,7 @@ Phase 2 should not re-decide the basic workflow foundation unless a static mocku
 The main static screen must include:
 
 - Application header with applicant identity, application reference, and group progress such as `2 of 5 groups complete`.
-- Persistent group navigation with all five required groups.
+- Group-first navigation with all five required groups visible before entering a focused group workspace.
 - Complete versus incomplete status for each group.
 - Selected group summary with expected documents, related fields, current state, and missing completion items.
 - Document review area showing expected document items for the selected group.
@@ -56,10 +56,10 @@ The main static screen must include:
 - Applicant comments visible for each selected-group document item.
 - Scrollable/selectable uploaded-file list for a selected document item with multiple files.
 - Selected uploaded file marker.
-- Document preview region for the selected uploaded file.
+- Document preview region for the selected uploaded file, including a static `View full screen` affordance.
 - No-preview treatment for `Doesn't exist` documents in at least one representative state.
 - Application field review area with submitted values, editable controls, and separate verified checkboxes.
-- Blocker or missing-items area grouped by unverified documents, unchecked fields, and reopen comments when relevant.
+- Inline blocker visibility through the selected-group summary, group and document states, unchecked fields, and reopen comments when relevant.
 
 Supporting static panels must show representative states that are not visible in the selected Applicant ID screen, especially `Reopened`, `Doesn't exist`, and simple complete-group states.
 
@@ -83,8 +83,9 @@ The static mockup plan must include examples of:
 ## 7. Confirmed design decisions
 
 - The Phase 2 deliverable is an actual static UI build, not documentation only.
-- The main screen should use Applicant ID as the selected group.
-- The UI should include supporting static panels for states that live outside the selected Applicant ID group.
+- The main screen should show the group overview first, with Applicant ID represented as the opened focused group workspace.
+- The UI should include lower-priority supporting static panels for states that live outside the selected Applicant ID group.
+- Mockup review exposed visual clutter from persistent group navigation, so Phase 2 now uses a group-first navigation model with no document group pane inside the focused group workspace.
 - Uploaded file entries should use explicit upload reason labels.
 - The styling should be loosely Salesforce Lightning-inspired while remaining a custom mockup.
 - The fictional Dana Levi sample applicant data should remain the default sample content.
