@@ -4,6 +4,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 
 ## Required content checklist
 
+- [ ] Phase 2 builds the actual static UI mockup.
 - [ ] Header shows applicant name, application reference, program, and group-count progress.
 - [ ] Progress uses group completion count, such as `2 of 5 groups complete`.
 - [ ] Left navigation lists all five verification groups.
@@ -13,6 +14,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - [ ] Document rows show document name, current state, applicant comment, and file count when relevant.
 - [ ] Uploaded-file list is visible for a document with multiple files.
 - [ ] Uploaded-file list preserves upload history and marks one selected file.
+- [ ] Uploaded-file entries show explicit upload labels such as `Initial upload` and `Applicant replacement`.
 - [ ] Document preview region shows the selected uploaded file.
 - [ ] No-preview treatment is represented for `Doesn't exist` or no-file conditions.
 - [ ] Field review area shows field labels and current values.
@@ -23,6 +25,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - [ ] Blockers list unverified documents by document name and current state.
 - [ ] Blockers list unchecked fields by field label.
 - [ ] Blockers include required reopen comments when a reopen state is represented.
+- [ ] Supporting static panels show Parent 2 ID, Applicant Income, and Applicant Disability Status state examples.
 
 ## Representative state checklist
 
@@ -41,6 +44,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 
 ## Visual review checklist
 
+- [ ] Styling is loosely Salesforce Lightning-inspired without strictly cloning Salesforce UI.
 - [ ] Document validity review and field consistency review are visually distinct.
 - [ ] Document review and field review are close enough to compare evidence with fields.
 - [ ] The selected group is obvious.
@@ -51,6 +55,7 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - [ ] Preview unavailable states explain why no preview appears.
 - [ ] The blocker list is visible without hidden instructions.
 - [ ] The screen feels like an operational Salesforce-adjacent workspace, not a marketing page.
+- [ ] The fictional Dana Levi sample data remains the default sample content.
 
 ## Phase 2 exit review questions
 

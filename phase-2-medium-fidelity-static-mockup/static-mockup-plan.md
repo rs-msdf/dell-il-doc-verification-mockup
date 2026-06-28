@@ -6,6 +6,14 @@ The Phase 2 mockup should be one desktop reviewer workspace screen. The default 
 
 The screen should be medium fidelity: realistic hierarchy, spacing, labels, statuses, and representative content, but no functional interactions.
 
+Confirmed build direction:
+
+- Build the actual static UI for Phase 2 now.
+- Use one main Applicant ID workspace screen plus supporting static panels for other group states.
+- Keep the fictional Dana Levi sample data.
+- Use explicit uploaded-file labels for traceability.
+- Keep the style loosely Salesforce Lightning-inspired rather than a strict Salesforce clone.
+
 ## Screen layout
 
 ```text
@@ -108,6 +116,8 @@ File entries:
 
 Phase 2 should include explicit upload reason labels because they help demonstrate traceability. This does not close the open question permanently; it tests the value of labels in the static mockup.
 
+For the Phase 2 build, explicit upload labels are confirmed and should be included in the static UI.
+
 ## Document preview region
 
 For the selected `Back of ID` file, show a document-preview placeholder that feels like an actual evidence area:
@@ -168,3 +178,15 @@ Controls should look like real controls but should not imply interactivity in Ph
 - Group navigation rows.
 
 Phase 3 will make these controls clickable and stateful.
+
+## Supporting static panels
+
+Because the main selected screen is Applicant ID, the static UI should also include compact supporting panels for representative states that live in other groups:
+
+| Supporting panel | Purpose | Required states shown |
+| --- | --- | --- |
+| Parent 2 ID | Show correction and no-preview edge cases. | `Reopened`, `Doesn't exist`, applicant-comment-only context. |
+| Applicant Income | Show incomplete financial review. | `Uploaded`, `Not uploaded`, unchecked income field. |
+| Applicant Disability Status | Show a simple complete group. | Complete group, `Verified` document, checked field. |
+
+These panels should be static summaries, not separate full screens. They exist to make Phase 2 state coverage visible without turning the static mockup into an interactive prototype.
