@@ -41,6 +41,20 @@ Preview the production build locally:
 npm run preview
 ```
 
+## Publish to GitHub Pages
+
+This repository is configured to publish the Vite production build from `dist/` with GitHub Actions.
+
+In GitHub, open the repository settings, go to **Pages**, and set **Source** to **GitHub Actions**. Then push to `master`, or run the **Deploy UI to GitHub Pages** workflow manually from the **Actions** tab.
+
+The published UI will be available at:
+
+```text
+https://rs-msdf.github.io/dell-il-doc-verification-mockup/
+```
+
+For GitHub Pages, the workflow builds with Vite mode `github-pages`, which sets the app base path to `/dell-il-doc-verification-mockup/` so compiled assets load correctly from the project page URL.
+
 ## Key Files
 
 - `index.html`: Vite HTML entry point.
