@@ -13,7 +13,7 @@ The data should preserve the Phase 2 Dana Levi scenario while expanding it enoug
 | Applicant name | Dana Levi |
 | Application reference | APP-2026-0148 |
 | Program | Dell IL Tech Leaders |
-| Initial review status | Verification in progress |
+| Summary status display | Derived group progress only; no separate review-status chip. |
 | Initial progress | Derived from fixture, expected to begin as 2 of 5 groups complete |
 
 ## 3. Group fixture coverage
@@ -49,7 +49,7 @@ The data should preserve the Phase 2 Dana Levi scenario while expanding it enoug
 | Document | Initial state | Files | Comment | Phase 3 interaction coverage |
 | --- | --- | --- | --- | --- |
 | ID | `Verified` | 1 | `Parent 2 front ID attached.` | Verified baseline. |
-| Back of ID | `Reopened` | 1 | `Original upload was the wrong side.` | Waiting-for-applicant state, prior reviewer comment. |
+| Back of ID | `Reopened` | 1 | `Original upload was the wrong side.` | Sent-comment viewing, verification from reopened state, and prior reviewer comment. |
 | ID appendix | `Doesn't exist` | 0 | `Parent 2 has no appendix document.` | Verify or reopen a comment-only document. |
 
 ### Applicant Income

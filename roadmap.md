@@ -75,10 +75,13 @@ Turn the static mockup into a clickable prototype that validates navigation, rev
 - Allow reviewers to move between the five verification groups while preserving visible progress.
 - Add prototype controls for document state transitions:
   - `Uploaded` to `Verified`.
+  - `Verified` to `Uploaded` when a reviewer needs to undo a mistaken verification.
   - `Uploaded` to `Reopened` with required comment.
   - `Verified` to `Reopened` with required comment.
-  - `Doesn't exist` to `Verified`.
+  - `Reopened` to `Verified` after reviewer accepts the corrected or existing evidence.
+  - `Doesn't exist` to `Verified` with required acceptance comment.
   - `Doesn't exist` to `Reopened` with required comment.
+- Expose the latest sent correction comment for reopened documents.
 - Prevent invalid or unsupported state transitions from appearing as available actions.
 - Add editable application fields while keeping field verification as a separate checkbox action.
 - Update group completion indicators when all documents are verified and all fields are checked.
@@ -87,7 +90,7 @@ Turn the static mockup into a clickable prototype that validates navigation, rev
 - Clickable prototype with realistic navigation and stateful UI behavior.
 - Simulated applicant data across all groups.
 - Prototype validation notes for confusing states, unclear actions, or missing blockers.
-- Current Phase 3 status: planning documentation created in `phase-3-clickable-workflow-prototype/`.
+- Phase 3 status: complete. The clickable two-page prototype is implemented, validated, and documented in `phase-3-clickable-workflow-prototype/`.
 
 ### Exit criteria
 - Reviewers can complete a group progressively by verifying documents and checking fields.

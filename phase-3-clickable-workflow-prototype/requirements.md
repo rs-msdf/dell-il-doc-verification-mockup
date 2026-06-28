@@ -26,9 +26,11 @@ Phase 3 should build from this existing shape rather than redesigning the worksp
 - Conditional document action controls based on the selected document state.
 - Reviewer transitions:
   - `Uploaded` to `Verified`.
+  - `Verified` to `Uploaded` when a reviewer needs to undo a mistaken verification.
   - `Uploaded` to `Reopened` with required comment.
   - `Verified` to `Reopened` with required comment.
-  - `Doesn't exist` to `Verified`.
+  - `Reopened` to `Verified` after reviewer accepts the corrected or existing evidence.
+    - `Doesn't exist` to `Verified` with required acceptance comment explaining why no upload is acceptable.
   - `Doesn't exist` to `Reopened` with required comment.
 - Hidden or disabled unsupported actions for states that do not allow reviewer transitions.
 - Reopen comment entry and validation.
@@ -37,7 +39,7 @@ Phase 3 should build from this existing shape rather than redesigning the worksp
 - Separate field confirmation checkboxes that remain independent from edits.
 - Derived group completion from current document and field states.
 - Derived application progress count, such as `3 of 5 groups complete`.
-- Inline blocker visibility for unverified documents, unchecked fields, and pending reopen comment validation.
+- Inline blocker visibility for unverified documents, unchecked fields, pending reopen comment validation, and pending missing-document acceptance comment validation.
 - Desktop-only clickable prototype.
 
 ## 4. Out of scope
@@ -54,10 +56,10 @@ Phase 3 should build from this existing shape rather than redesigning the worksp
 
 ### Group selection
 
-- Clicking a group card opens that group in the focused workspace.
-- The selected group card is visually marked.
-- The focused workspace title, document tabs, fields, blockers, and completion chips update to the selected group.
-- The `All document groups` control returns focus to the group overview area without losing current prototype state.
+- Clicking a group card opens a separate focused workspace page for that group.
+- The summary page and focused workspace page do not render at the same time.
+- The focused workspace title, document tabs, fields, blockers, and completion chips reflect the selected group.
+- The `Back to all document groups` control returns to the summary page without losing current prototype state.
 
 ### Document selection
 
@@ -65,6 +67,7 @@ Phase 3 should build from this existing shape rather than redesigning the worksp
 - The selected document controls the visible state badge, applicant comment, file tabs, preview area, and available document actions.
 - Document items with no uploaded files show a no-preview state.
 - `Doesn't exist` document items show comment-only review context and no preview.
+- `Doesn't exist` uses the same visual status treatment as `Not uploaded` because both indicate missing uploaded evidence.
 
 ### Uploaded-file selection
 
@@ -75,9 +78,13 @@ Phase 3 should build from this existing shape rather than redesigning the worksp
 ### Document decisions
 
 - `Verify` is available for `Uploaded` and `Doesn't exist` documents.
+- Verifying a `Doesn't exist` document first opens a required acceptance comment input directly below the decision controls.
+- `Verify` is available for `Reopened` documents so a reviewer can complete the item after accepting the evidence.
+- `Mark as uploaded` is available for `Verified` documents so a reviewer can reverse an accidental verification without changing uploaded-file history.
 - `Reopen` is available for `Uploaded`, `Verified`, and `Doesn't exist` documents.
-- `Reopen` opens or reveals a required comment input before the state can change.
-- `Not uploaded` and `Reopened` documents do not expose reviewer decision actions because the reviewer is waiting for applicant action.
+- `Reopen` opens or reveals a required comment input directly below the decision controls before the state can change.
+- `Reopened` documents expose the latest sent correction comment through a clear action-area control.
+- `Not uploaded` documents do not expose reviewer decision actions because the reviewer is waiting for applicant action.
 - Successful reopen changes the document state to `Reopened`, stores the reviewer comment, and shows simulated notification feedback.
 
 ### Field review
@@ -92,7 +99,7 @@ Phase 3 should build from this existing shape rather than redesigning the worksp
 - A group is complete only when every group document is `Verified` and every group field is checked.
 - Top-level progress updates whenever group completion changes.
 - Selected-group blocker chips update immediately from current state.
-- Blocker categories include unverified documents, unchecked fields, and pending reopen comment validation.
+- Blocker categories include unverified documents, unchecked fields, pending reopen comment validation, and pending missing-document acceptance comment validation.
 
 ## 6. Exit criteria
 

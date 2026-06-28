@@ -90,7 +90,10 @@ Expected result:
 Navigation checks:
 
 - All five group cards are clickable.
-- Selected group styling follows the focused workspace.
+- Group cards show document and field progress plus missing-work details instead of a generic blocker count.
+- The summary page shows the five group cards without rendering a group workspace below them.
+- Clicking a group card opens a separate focused workspace page for that group.
+- The focused workspace back button returns to the summary page.
 - Returning to a changed group preserves prior state.
 - Document tabs update selected document content.
 - Uploaded-file tabs update selected preview content.
@@ -98,15 +101,19 @@ Navigation checks:
 Action checks:
 
 - `Uploaded` documents expose Verify and Reopen.
-- `Verified` documents expose Reopen but not Verify.
-- `Doesn't exist` documents expose Verify and Reopen with no preview.
+- `Verified` documents expose Reopen and Mark as uploaded, but not Verify.
+- Mark as uploaded changes a `Verified` document back to `Uploaded` without changing file history.
+- `Doesn't exist` documents expose Verify and Reopen with no preview, and Verify requires an acceptance comment.
 - `Not uploaded` documents expose no reviewer decision actions.
-- `Reopened` documents expose no reviewer decision actions until applicant replacement is simulated in a later phase.
+- `Reopened` documents expose Verify and a control to view the latest sent correction comment.
 
 Validation checks:
 
 - Reopen cannot submit without a comment.
+- Reopen comment entry appears directly below the document decision controls, not at the bottom of the evidence pane.
+- `Doesn't exist` verification cannot submit without an acceptance comment explaining why no upload is acceptable.
 - Reopen stores the comment after submission.
+- Reopened documents allow the reviewer to view the latest sent correction comment from the action area.
 - Simulated notification feedback appears after reopen submission.
 - Clearing or canceling a reopen draft restores the prior selected-document state.
 
@@ -117,6 +124,8 @@ Completion checks:
 - Editing a field does not automatically check it.
 - Unchecking a field in a complete group makes the group incomplete.
 - Reopening a verified document in a complete group makes the group incomplete.
+- Verifying a reopened document can make its group complete again when all fields and other documents are complete.
+- Marking a verified document as uploaded makes the document and group incomplete until it is verified again.
 - Overall progress is derived from current completed groups.
 
 ## 4. Confusion log template
@@ -144,3 +153,27 @@ Before Phase 3 is considered complete, run the walkthrough scenarios and record:
 - Which scenarios required wording, layout, or interaction changes.
 - Which open questions should move into Phase 4 high-fidelity refinement.
 - Which implementation gaps should move into Phase 5 full functional mockup planning.
+
+## 6. Implementation validation result
+
+Phase 3 implementation validation was run against the local Vite app with a headless Playwright walkthrough covering Scenarios A-E.
+
+Result: all five scenarios passed after implementation.
+
+Additional navigation result: the two-page summary/drilldown smoke test passed. The summary page rendered exactly five group cards with no workspace below it, clicking Applicant Income opened only that drilldown workspace, the back button returned to the summary, and returning to Applicant Income preserved the selected uploaded-file tab.
+
+Additional transition result: the `Verified` to `Uploaded` reverse-transition smoke test passed. A verified Applicant ID document exposed `Mark as uploaded`, did not expose `Verify` until after reversal, preserved the selected file context, increased blockers after moving back to `Uploaded`, and returned to the prior blocker count after verifying again.
+
+Additional reopen-entry result: the inline reopen comment flow smoke test passed. Clicking `Reopen` opened the required comment field directly below the decision buttons, empty submission validation appeared in place, and submitting a valid comment still stored the reviewer comment and notification feedback.
+
+Additional reopened-state result: the reopened document smoke test passed. A `Reopened` Parent 2 Back of ID exposed `Verify` and `View sent comment`, revealed the latest correction comment in the action area, then moved to `Verified` after verification and removed the reopened-only sent-comment control.
+
+Additional `Doesn't exist` acceptance result: the missing-document acceptance smoke test passed. The `Doesn't exist` badge matched the `Not uploaded` badge styling, clicking `Verify` opened a required acceptance comment, submission stayed disabled until a comment was entered, and the accepted document stored the missing-document acceptance comment after moving to `Verified`.
+
+- Scenario A passed: Applicant ID file switching, document verification, and independent field confirmation updated blockers as expected.
+- Scenario B passed: reopening a verified Parent 1 document blocked empty submission, accepted a valid comment, stored notification feedback, and reduced overall progress.
+- Scenario C passed: a `Doesn't exist` Parent 2 appendix showed no preview and could be accepted as verified.
+- Scenario D passed: Applicant Income file switching, field editing, field confirmation, and uploaded-document verification behaved independently.
+- Scenario E passed: reopening the disability certificate changed the complete group back to incomplete and updated overall progress.
+
+No product confusion issues were identified during the automated walkthrough. The open prototype questions listed in `prototype-data-plan.md` remain candidates for Phase 4 stakeholder review.

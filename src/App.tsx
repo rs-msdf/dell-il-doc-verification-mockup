@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import {
   AlertCircle,
@@ -13,136 +14,353 @@ import {
 } from 'lucide-react';
 
 type DocumentState = 'Verified' | 'Uploaded' | 'Not uploaded' | 'Reopened' | "Doesn't exist";
-
-type GroupSummary = {
-  name: string;
-  documentsComplete: string;
-  fieldsComplete: string;
-  status: 'Complete' | 'Incomplete';
-  blockers: number;
-  selected?: boolean;
-};
-
-type DocumentItem = {
-  name: string;
-  state: DocumentState;
-  files: number;
-  comment: string;
-  selected?: boolean;
-};
+type GroupStatus = 'Complete' | 'Incomplete';
+type FieldInputType = 'text' | 'number' | 'date' | 'select';
 
 type UploadedFile = {
-  name: string;
-  date: string;
-  time: string;
-  selected?: boolean;
+  id: string;
+  filename: string;
+  uploadLabel: 'Initial upload' | 'Applicant replacement' | 'Requested correction replacement';
+  uploadedAt: string;
 };
 
-type FieldItem = {
+type ReviewerComment = {
+  id: string;
+  comment: string;
+  createdAt: string;
+};
+
+type RequiredDocumentItem = {
+  id: string;
+  name: string;
+  state: DocumentState;
+  applicantComment: string;
+  uploadedFiles: UploadedFile[];
+  reviewerComments: ReviewerComment[];
+  absenceAcceptanceComments?: ReviewerComment[];
+};
+
+type ApplicationField = {
+  id: string;
   label: string;
   value: string;
+  inputType: FieldInputType;
   checked: boolean;
   note: string;
-  edited?: boolean;
+  editedInSession: boolean;
 };
 
-const groupSummaries: GroupSummary[] = [
+type VerificationGroup = {
+  id: string;
+  name: string;
+  documents: RequiredDocumentItem[];
+  fields: ApplicationField[];
+};
+
+type ReopenDraft = {
+  groupId: string;
+  documentId: string;
+  comment: string;
+  touched: boolean;
+};
+
+type AbsenceAcceptanceDraft = {
+  groupId: string;
+  documentId: string;
+  comment: string;
+  touched: boolean;
+};
+
+type PrototypeNotification = {
+  id: string;
+  documentId: string;
+  message: string;
+  createdAt: string;
+};
+
+type GroupBlockers = {
+  unverifiedDocuments: RequiredDocumentItem[];
+  uncheckedFields: ApplicationField[];
+  pendingReopenComment: boolean;
+  pendingAbsenceAcceptanceComment: boolean;
+};
+
+const initialGroups: VerificationGroup[] = [
   {
+    id: 'applicant-id',
     name: 'Applicant ID',
-    documentsComplete: '1 of 3',
-    fieldsComplete: '4 of 6',
-    status: 'Incomplete',
-    blockers: 4,
-    selected: true,
+    documents: [
+      {
+        id: 'applicant-id-front',
+        name: 'ID',
+        state: 'Verified',
+        applicantComment: 'Clear scan of front ID.',
+        uploadedFiles: [
+          {
+            id: 'applicant-id-front-initial',
+            filename: 'front-id-2026-06-15.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-15T09:12:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+      {
+        id: 'applicant-id-back',
+        name: 'Back of ID',
+        state: 'Uploaded',
+        applicantComment: 'I uploaded a clearer back-side image after the first scan was blurry.',
+        uploadedFiles: [
+          {
+            id: 'applicant-id-back-replacement',
+            filename: 'back-id-replacement-2026-06-24.pdf',
+            uploadLabel: 'Applicant replacement',
+            uploadedAt: '2026-06-24T14:32:00',
+          },
+          {
+            id: 'applicant-id-back-initial',
+            filename: 'back-id-initial-2026-06-15.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-15T09:18:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+      {
+        id: 'applicant-id-appendix',
+        name: 'ID appendix',
+        state: 'Not uploaded',
+        applicantComment: 'I do not currently have an appendix document.',
+        uploadedFiles: [],
+        reviewerComments: [],
+      },
+    ],
+    fields: [
+      { id: 'applicant-first-name', label: 'First name', value: 'Dana', inputType: 'text', checked: true, note: 'Matches ID.', editedInSession: false },
+      { id: 'applicant-last-name', label: 'Last name', value: 'Levi', inputType: 'text', checked: true, note: 'Matches ID.', editedInSession: false },
+      { id: 'applicant-id-number', label: 'ID number', value: '031245678', inputType: 'text', checked: true, note: 'Matches ID.', editedInSession: false },
+      {
+        id: 'applicant-date-of-birth',
+        label: 'Date of birth',
+        value: '1999-04-18',
+        inputType: 'date',
+        checked: false,
+        note: 'Needs confirmation against the selected evidence.',
+        editedInSession: false,
+      },
+      {
+        id: 'applicant-marital-status',
+        label: 'Marital status',
+        value: 'Single',
+        inputType: 'text',
+        checked: false,
+        note: 'Needs evidence review.',
+        editedInSession: false,
+      },
+      {
+        id: 'applicant-children-under-18',
+        label: 'Number of children under 18',
+        value: '0',
+        inputType: 'number',
+        checked: true,
+        note: 'Reviewer adjusted value after evidence review.',
+        editedInSession: true,
+      },
+    ],
   },
   {
+    id: 'parent-1-id',
     name: 'Parent 1 ID',
-    documentsComplete: '3 of 3',
-    fieldsComplete: '1 of 1',
-    status: 'Complete',
-    blockers: 0,
+    documents: [
+      {
+        id: 'parent-1-id-front',
+        name: 'ID',
+        state: 'Verified',
+        applicantComment: 'Parent 1 front ID attached.',
+        uploadedFiles: [
+          {
+            id: 'parent-1-id-front-initial',
+            filename: 'parent-1-front-id-2026-06-16.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-16T10:05:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+      {
+        id: 'parent-1-id-back',
+        name: 'Back of ID',
+        state: 'Verified',
+        applicantComment: 'Parent 1 back ID attached.',
+        uploadedFiles: [
+          {
+            id: 'parent-1-id-back-initial',
+            filename: 'parent-1-back-id-2026-06-16.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-16T10:07:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+      {
+        id: 'parent-1-id-appendix',
+        name: 'ID appendix',
+        state: 'Verified',
+        applicantComment: 'Parent 1 does not have an appendix.',
+        uploadedFiles: [],
+        reviewerComments: [],
+      },
+    ],
+    fields: [
+      {
+        id: 'parent-1-siblings-under-24',
+        label: 'Number of siblings under 24 years of age',
+        value: '2',
+        inputType: 'number',
+        checked: true,
+        note: 'Confirmed against parent declaration.',
+        editedInSession: false,
+      },
+    ],
   },
   {
+    id: 'parent-2-id',
     name: 'Parent 2 ID',
-    documentsComplete: '1 of 3',
-    fieldsComplete: '1 of 1',
-    status: 'Incomplete',
-    blockers: 2,
+    documents: [
+      {
+        id: 'parent-2-id-front',
+        name: 'ID',
+        state: 'Verified',
+        applicantComment: 'Parent 2 front ID attached.',
+        uploadedFiles: [
+          {
+            id: 'parent-2-id-front-initial',
+            filename: 'parent-2-front-id-2026-06-18.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-18T08:44:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+      {
+        id: 'parent-2-id-back',
+        name: 'Back of ID',
+        state: 'Reopened',
+        applicantComment: 'Original upload was the wrong side.',
+        uploadedFiles: [
+          {
+            id: 'parent-2-id-back-initial',
+            filename: 'parent-2-front-duplicate-2026-06-18.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-18T08:49:00',
+          },
+        ],
+        reviewerComments: [
+          {
+            id: 'parent-2-id-back-reopen-comment',
+            comment: 'Please upload the back side of Parent 2 ID. The current file duplicates the front side.',
+            createdAt: '2026-06-20T11:30:00',
+          },
+        ],
+      },
+      {
+        id: 'parent-2-id-appendix',
+        name: 'ID appendix',
+        state: "Doesn't exist",
+        applicantComment: 'Parent 2 has no appendix document.',
+        uploadedFiles: [],
+        reviewerComments: [],
+      },
+    ],
+    fields: [
+      {
+        id: 'parent-2-siblings-under-24',
+        label: 'Number of siblings under 24 years of age',
+        value: '2',
+        inputType: 'number',
+        checked: true,
+        note: 'Confirmed against parent declaration.',
+        editedInSession: false,
+      },
+    ],
   },
   {
+    id: 'applicant-income',
     name: 'Applicant Income',
-    documentsComplete: '0 of 2',
-    fieldsComplete: '0 of 1',
-    status: 'Incomplete',
-    blockers: 3,
+    documents: [
+      {
+        id: 'applicant-income-statement',
+        name: 'Income statement',
+        state: 'Uploaded',
+        applicantComment: 'June statement uploaded; May version also included.',
+        uploadedFiles: [
+          {
+            id: 'applicant-income-june',
+            filename: 'income-statement-june-2026.pdf',
+            uploadLabel: 'Applicant replacement',
+            uploadedAt: '2026-06-25T16:02:00',
+          },
+          {
+            id: 'applicant-income-may',
+            filename: 'income-statement-may-2026.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-12T13:41:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+      {
+        id: 'applicant-benefits-statement',
+        name: 'Benefits statement',
+        state: 'Not uploaded',
+        applicantComment: 'Waiting for National Insurance statement.',
+        uploadedFiles: [],
+        reviewerComments: [],
+      },
+    ],
+    fields: [
+      {
+        id: 'applicant-income-value',
+        label: 'Applicant income',
+        value: '4,850 NIS/month',
+        inputType: 'text',
+        checked: false,
+        note: 'Compare against the selected income statement.',
+        editedInSession: false,
+      },
+    ],
   },
   {
+    id: 'applicant-disability-status',
     name: 'Applicant Disability Status',
-    documentsComplete: '1 of 1',
-    fieldsComplete: '1 of 1',
-    status: 'Complete',
-    blockers: 0,
-  },
-];
-
-const applicantDocuments: DocumentItem[] = [
-  {
-    name: 'ID',
-    state: 'Verified',
-    files: 1,
-    comment: 'Clear scan of front ID.',
-  },
-  {
-    name: 'Back of ID',
-    state: 'Uploaded',
-    files: 2,
-    comment: 'I uploaded a clearer back-side image after the first scan was blurry.',
-    selected: true,
-  },
-  {
-    name: 'ID appendix',
-    state: 'Not uploaded',
-    files: 0,
-    comment: 'I do not currently have an appendix document.',
-  },
-];
-
-const uploadedFiles: UploadedFile[] = [
-  {
-    name: 'back-id-replacement-2026-06-24.pdf',
-    date: '2026-06-24',
-    time: '14:32',
-    selected: true,
-  },
-  {
-    name: 'back-id-initial-2026-06-15.pdf',
-    date: '2026-06-15',
-    time: '09:18',
-  },
-];
-
-const applicantFields: FieldItem[] = [
-  { label: 'First name', value: 'Dana', checked: true, note: 'Matches ID.' },
-  { label: 'Last name', value: 'Levi', checked: true, note: 'Matches ID.' },
-  { label: 'ID number', value: '031245678', checked: true, note: 'Matches ID.' },
-  {
-    label: 'Date of birth',
-    value: '1999-04-18',
-    checked: false,
-    note: 'Needs confirmation against the selected evidence.',
-  },
-  {
-    label: 'Marital status',
-    value: 'Single',
-    checked: false,
-    note: 'Needs evidence review.',
-  },
-  {
-    label: 'Number of children under 18',
-    value: '0',
-    checked: true,
-    edited: true,
-    note: 'Reviewer adjusted value after evidence review.',
+    documents: [
+      {
+        id: 'applicant-disability-certificate',
+        name: 'Disability certificate',
+        state: 'Verified',
+        applicantComment: 'Certificate from the National Insurance Institute.',
+        uploadedFiles: [
+          {
+            id: 'applicant-disability-certificate-initial',
+            filename: 'disability-certificate-2026-06-13.pdf',
+            uploadLabel: 'Initial upload',
+            uploadedAt: '2026-06-13T15:26:00',
+          },
+        ],
+        reviewerComments: [],
+      },
+    ],
+    fields: [
+      {
+        id: 'applicant-disability-percentage',
+        label: 'Applicant disability percentage',
+        value: '40%',
+        inputType: 'text',
+        checked: true,
+        note: 'Confirmed against certificate.',
+        editedInSession: false,
+      },
+    ],
   },
 ];
 
@@ -161,6 +379,91 @@ const stateClassNames: Record<DocumentState, string> = {
   Reopened: 'reopened',
   "Doesn't exist": 'doesnt-exist',
 };
+
+const attentionOrder: DocumentState[] = ['Uploaded', "Doesn't exist", 'Not uploaded', 'Reopened', 'Verified'];
+
+function documentIsComplete(documentItem: RequiredDocumentItem) {
+  return documentItem.state === 'Verified';
+}
+
+function fieldIsComplete(field: ApplicationField) {
+  return field.checked;
+}
+
+function groupIsComplete(group: VerificationGroup) {
+  return group.documents.every(documentIsComplete) && group.fields.every(fieldIsComplete);
+}
+
+function getGroupBlockers(
+  group: VerificationGroup,
+  activeReopenDraft: ReopenDraft | null,
+  activeAbsenceAcceptanceDraft: AbsenceAcceptanceDraft | null,
+): GroupBlockers {
+  return {
+    unverifiedDocuments: group.documents.filter((documentItem) => !documentIsComplete(documentItem)),
+    uncheckedFields: group.fields.filter((field) => !fieldIsComplete(field)),
+    pendingReopenComment:
+      activeReopenDraft?.groupId === group.id && activeReopenDraft.comment.trim().length === 0,
+    pendingAbsenceAcceptanceComment:
+      activeAbsenceAcceptanceDraft?.groupId === group.id && activeAbsenceAcceptanceDraft.comment.trim().length === 0,
+  };
+}
+
+function getBlockerCount(blockers: GroupBlockers) {
+  return (
+    blockers.unverifiedDocuments.length +
+    blockers.uncheckedFields.length +
+    (blockers.pendingReopenComment ? 1 : 0) +
+    (blockers.pendingAbsenceAcceptanceComment ? 1 : 0)
+  );
+}
+
+function getGroupStatus(group: VerificationGroup): GroupStatus {
+  return groupIsComplete(group) ? 'Complete' : 'Incomplete';
+}
+
+function getDefaultDocumentId(group: VerificationGroup) {
+  return (
+    attentionOrder
+      .map((state) => group.documents.find((documentItem) => documentItem.state === state))
+      .find(Boolean)?.id ?? group.documents[0].id
+  );
+}
+
+function getLatestFileId(documentItem: RequiredDocumentItem) {
+  return documentItem.uploadedFiles[0]?.id ?? '';
+}
+
+function createInitialSelectedDocuments(groups: VerificationGroup[]) {
+  return Object.fromEntries(groups.map((group) => [group.id, getDefaultDocumentId(group)]));
+}
+
+function createInitialSelectedFiles(groups: VerificationGroup[]) {
+  return Object.fromEntries(
+    groups.flatMap((group) =>
+      group.documents.map((documentItem) => [documentItem.id, getLatestFileId(documentItem)]),
+    ),
+  );
+}
+
+function getDisplayDateTime(uploadedAt: string) {
+  const [date, timeWithSeconds] = uploadedAt.split('T');
+  return { date, time: timeWithSeconds.slice(0, 5) };
+}
+
+function getAvailableActions(documentItem: RequiredDocumentItem) {
+  return {
+    canVerify: documentItem.state === 'Uploaded' || documentItem.state === 'Reopened' || documentItem.state === "Doesn't exist",
+    canMarkUploaded: documentItem.state === 'Verified',
+    canReopen: documentItem.state === 'Uploaded' || documentItem.state === 'Verified' || documentItem.state === "Doesn't exist",
+    canViewSentComment: documentItem.state === 'Reopened' && documentItem.reviewerComments.length > 0,
+  };
+}
+
+function formatTimestamp(timestamp: string) {
+  const { date, time } = getDisplayDateTime(timestamp);
+  return `${date} ${time}`;
+}
 
 function StateBadge({ state }: { state: DocumentState }) {
   const Icon = stateIcons[state];
@@ -197,7 +500,272 @@ function DocumentTabStatus({ state }: { state: DocumentState }) {
 }
 
 function App() {
-  const selectedDocument = applicantDocuments.find((documentItem) => documentItem.selected) ?? applicantDocuments[0];
+  const [groups, setGroups] = useState<VerificationGroup[]>(initialGroups);
+  const [currentPage, setCurrentPage] = useState<'summary' | 'drilldown'>('summary');
+  const [selectedGroupId, setSelectedGroupId] = useState(initialGroups[0].id);
+  const [selectedDocumentIdByGroup, setSelectedDocumentIdByGroup] = useState<Record<string, string>>(() =>
+    createInitialSelectedDocuments(initialGroups),
+  );
+  const [selectedFileIdByDocument, setSelectedFileIdByDocument] = useState<Record<string, string>>(() =>
+    createInitialSelectedFiles(initialGroups),
+  );
+  const [activeReopenDraft, setActiveReopenDraft] = useState<ReopenDraft | null>(null);
+  const [activeAbsenceAcceptanceDraft, setActiveAbsenceAcceptanceDraft] = useState<AbsenceAcceptanceDraft | null>(null);
+  const [visibleSentCommentDocumentId, setVisibleSentCommentDocumentId] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<PrototypeNotification[]>([]);
+  const reopenCommentRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const selectedGroup = groups.find((group) => group.id === selectedGroupId) ?? groups[0];
+  const selectedDocumentId = selectedDocumentIdByGroup[selectedGroup.id] ?? getDefaultDocumentId(selectedGroup);
+  const selectedDocument =
+    selectedGroup.documents.find((documentItem) => documentItem.id === selectedDocumentId) ?? selectedGroup.documents[0];
+  const selectedFileId = selectedFileIdByDocument[selectedDocument.id] ?? getLatestFileId(selectedDocument);
+  const selectedFile = selectedDocument.uploadedFiles.find((uploadedFile) => uploadedFile.id === selectedFileId);
+  const selectedGroupBlockers = getGroupBlockers(selectedGroup, activeReopenDraft, activeAbsenceAcceptanceDraft);
+  const selectedGroupBlockerCount = getBlockerCount(selectedGroupBlockers);
+  const completedGroupCount = groups.filter(groupIsComplete).length;
+  const selectedDocumentActions = getAvailableActions(selectedDocument);
+  const latestReviewerComment = selectedDocument.reviewerComments[0];
+  const sentCommentIsVisible = visibleSentCommentDocumentId === selectedDocument.id;
+  const activeDraftMatchesSelection =
+    activeReopenDraft?.groupId === selectedGroup.id && activeReopenDraft.documentId === selectedDocument.id;
+  const activeDraftIsInvalid = Boolean(activeDraftMatchesSelection && activeReopenDraft.comment.trim().length === 0);
+  const activeAcceptanceDraftMatchesSelection =
+    activeAbsenceAcceptanceDraft?.groupId === selectedGroup.id &&
+    activeAbsenceAcceptanceDraft.documentId === selectedDocument.id;
+  const activeAcceptanceDraftIsInvalid = Boolean(
+    activeAcceptanceDraftMatchesSelection && activeAbsenceAcceptanceDraft.comment.trim().length === 0,
+  );
+  const selectedDocumentNotifications = notifications.filter(
+    (notification) => notification.documentId === selectedDocument.id,
+  );
+
+  useEffect(() => {
+    if (activeDraftMatchesSelection || activeAcceptanceDraftMatchesSelection) {
+      reopenCommentRef.current?.focus();
+    }
+  }, [activeDraftMatchesSelection, activeAcceptanceDraftMatchesSelection]);
+
+  function handleSelectGroup(group: VerificationGroup) {
+    setSelectedGroupId(group.id);
+    setSelectedDocumentIdByGroup((currentSelections) => ({
+      ...currentSelections,
+      [group.id]: currentSelections[group.id] ?? getDefaultDocumentId(group),
+    }));
+    setCurrentPage('drilldown');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleBackToSummary() {
+    setCurrentPage('summary');
+    setActiveReopenDraft(null);
+    setActiveAbsenceAcceptanceDraft(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleSelectDocument(documentItem: RequiredDocumentItem) {
+    setSelectedDocumentIdByGroup((currentSelections) => ({
+      ...currentSelections,
+      [selectedGroup.id]: documentItem.id,
+    }));
+    setSelectedFileIdByDocument((currentSelections) => ({
+      ...currentSelections,
+      [documentItem.id]: currentSelections[documentItem.id] || getLatestFileId(documentItem),
+    }));
+  }
+
+  function updateSelectedDocument(updatedDocument: RequiredDocumentItem) {
+    setGroups((currentGroups) =>
+      currentGroups.map((group) =>
+        group.id === selectedGroup.id
+          ? {
+              ...group,
+              documents: group.documents.map((documentItem) =>
+                documentItem.id === updatedDocument.id ? updatedDocument : documentItem,
+              ),
+            }
+          : group,
+      ),
+    );
+  }
+
+  function handleVerifyDocument() {
+    if (!selectedDocumentActions.canVerify) {
+      return;
+    }
+
+    if (selectedDocument.state === "Doesn't exist") {
+      setActiveReopenDraft(null);
+      setActiveAbsenceAcceptanceDraft({
+        groupId: selectedGroup.id,
+        documentId: selectedDocument.id,
+        comment: '',
+        touched: false,
+      });
+      return;
+    }
+
+    updateSelectedDocument({ ...selectedDocument, state: 'Verified' });
+    setVisibleSentCommentDocumentId(null);
+    setActiveAbsenceAcceptanceDraft((currentDraft) =>
+      currentDraft?.documentId === selectedDocument.id ? null : currentDraft,
+    );
+    setActiveReopenDraft((currentDraft) =>
+      currentDraft?.documentId === selectedDocument.id ? null : currentDraft,
+    );
+  }
+
+  function handleMarkDocumentUploaded() {
+    if (!selectedDocumentActions.canMarkUploaded) {
+      return;
+    }
+
+    updateSelectedDocument({ ...selectedDocument, state: 'Uploaded' });
+    setVisibleSentCommentDocumentId(null);
+    setActiveReopenDraft((currentDraft) =>
+      currentDraft?.documentId === selectedDocument.id ? null : currentDraft,
+    );
+  }
+
+  function handleStartReopen() {
+    if (!selectedDocumentActions.canReopen) {
+      return;
+    }
+
+    setActiveAbsenceAcceptanceDraft(null);
+    setActiveReopenDraft({
+      groupId: selectedGroup.id,
+      documentId: selectedDocument.id,
+      comment: '',
+      touched: false,
+    });
+  }
+
+  function handleCancelReopen() {
+    setActiveReopenDraft(null);
+  }
+
+  function handleCancelAbsenceAcceptance() {
+    setActiveAbsenceAcceptanceDraft(null);
+  }
+
+  function handleSubmitReopen() {
+    if (!activeReopenDraft || !activeDraftMatchesSelection || activeReopenDraft.comment.trim().length === 0) {
+      setActiveReopenDraft((currentDraft) => (currentDraft ? { ...currentDraft, touched: true } : currentDraft));
+      return;
+    }
+
+    const createdAt = new Date().toISOString();
+    const reviewerComment: ReviewerComment = {
+      id: `${selectedDocument.id}-reviewer-comment-${Date.now()}`,
+      comment: activeReopenDraft.comment.trim(),
+      createdAt,
+    };
+    const notification: PrototypeNotification = {
+      id: `${selectedDocument.id}-notification-${Date.now()}`,
+      documentId: selectedDocument.id,
+      message: 'Correction request queued for candidate',
+      createdAt,
+    };
+
+    updateSelectedDocument({
+      ...selectedDocument,
+      state: 'Reopened',
+      reviewerComments: [reviewerComment, ...selectedDocument.reviewerComments],
+    });
+    setNotifications((currentNotifications) => [notification, ...currentNotifications]);
+    setActiveReopenDraft(null);
+    setVisibleSentCommentDocumentId(selectedDocument.id);
+  }
+
+  function handleToggleSentComment() {
+    setVisibleSentCommentDocumentId((currentDocumentId) =>
+      currentDocumentId === selectedDocument.id ? null : selectedDocument.id,
+    );
+  }
+
+  function handleAbsenceAcceptanceDraftChange(comment: string) {
+    setActiveAbsenceAcceptanceDraft((currentDraft) =>
+      currentDraft && activeAcceptanceDraftMatchesSelection ? { ...currentDraft, comment } : currentDraft,
+    );
+  }
+
+  function handleSubmitAbsenceAcceptance() {
+    if (
+      !activeAbsenceAcceptanceDraft ||
+      !activeAcceptanceDraftMatchesSelection ||
+      activeAbsenceAcceptanceDraft.comment.trim().length === 0
+    ) {
+      setActiveAbsenceAcceptanceDraft((currentDraft) =>
+        currentDraft ? { ...currentDraft, touched: true } : currentDraft,
+      );
+      return;
+    }
+
+    const acceptanceComment: ReviewerComment = {
+      id: `${selectedDocument.id}-absence-acceptance-${Date.now()}`,
+      comment: activeAbsenceAcceptanceDraft.comment.trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    updateSelectedDocument({
+      ...selectedDocument,
+      state: 'Verified',
+      absenceAcceptanceComments: [
+        acceptanceComment,
+        ...(selectedDocument.absenceAcceptanceComments ?? []),
+      ],
+    });
+    setActiveAbsenceAcceptanceDraft(null);
+  }
+
+  function handleReopenDraftChange(comment: string) {
+    setActiveReopenDraft((currentDraft) =>
+      currentDraft && activeDraftMatchesSelection ? { ...currentDraft, comment } : currentDraft,
+    );
+  }
+
+  function handleFieldValueChange(fieldId: string, value: string) {
+    setGroups((currentGroups) =>
+      currentGroups.map((group) =>
+        group.id === selectedGroup.id
+          ? {
+              ...group,
+              fields: group.fields.map((field) =>
+                field.id === fieldId ? { ...field, value, editedInSession: true } : field,
+              ),
+            }
+          : group,
+      ),
+    );
+  }
+
+  function handleFieldCheckedChange(fieldId: string, checked: boolean) {
+    setGroups((currentGroups) =>
+      currentGroups.map((group) =>
+        group.id === selectedGroup.id
+          ? {
+              ...group,
+              fields: group.fields.map((field) => (field.id === fieldId ? { ...field, checked } : field)),
+            }
+          : group,
+      ),
+    );
+  }
+
+  const selectedGroupChips = useMemo(() => {
+    if (selectedGroupBlockerCount === 0) {
+      return ['All documents verified', 'All fields confirmed'];
+    }
+
+    return [
+      `${selectedGroupBlockers.unverifiedDocuments.length} documents need verification`,
+      `${selectedGroupBlockers.uncheckedFields.length} fields unchecked`,
+      ...(selectedGroupBlockers.pendingReopenComment ? ['Reopen comment required'] : []),
+      ...(selectedGroupBlockers.pendingAbsenceAcceptanceComment ? ['Acceptance comment required'] : []),
+      `${selectedGroupBlockerCount} blockers`,
+    ];
+  }, [selectedGroupBlockerCount, selectedGroupBlockers]);
 
   return (
     <main className="workspace-shell">
@@ -213,68 +781,93 @@ function App() {
           </div>
         </div>
         <div className="header-status" aria-label="Application verification status">
-          <span className="progress-pill">2 of 5 groups complete</span>
-          <span className="review-status">Verification in progress</span>
+          <span className="progress-pill">
+            {completedGroupCount} of {groups.length} groups complete
+          </span>
         </div>
       </section>
 
-      <section className="group-overview" aria-labelledby="group-overview-title">
+      {currentPage === 'summary' ? <section className="group-overview" aria-labelledby="group-overview-title">
         <div className="group-overview-header">
           <div>
             <p className="eyebrow">Start here</p>
             <h2 id="group-overview-title">Document groups</h2>
-            <p className="summary-copy">Choose a group to review. Each group opens into its own focused workspace.</p>
+            <p className="summary-copy">Choose one group to open its dedicated review workspace.</p>
           </div>
-          <span className="progress-pill">Applicant ID opened below</span>
         </div>
 
         <div className="group-card-grid" aria-label="Verification groups">
-          {groupSummaries.map((groupSummary) => (
-            <article className={`group-card ${groupSummary.selected ? 'selected' : ''}`} key={groupSummary.name}>
+          {groups.map((group) => {
+            const documentsComplete = group.documents.filter(documentIsComplete).length;
+            const fieldsComplete = group.fields.filter(fieldIsComplete).length;
+            const status = getGroupStatus(group);
+            const documentsMissing = group.documents.length - documentsComplete;
+            const fieldsMissing = group.fields.length - fieldsComplete;
+            const missingSummary = [
+              documentsMissing > 0
+                ? `${documentsMissing} ${documentsMissing === 1 ? 'document needs' : 'documents need'} review`
+                : null,
+              fieldsMissing > 0 ? `${fieldsMissing} ${fieldsMissing === 1 ? 'field' : 'fields'} unchecked` : null,
+            ].filter(Boolean).join(' · ');
+
+            return (
+            <button
+              className="group-card"
+              type="button"
+              onClick={() => handleSelectGroup(group)}
+              key={group.id}
+            >
               <div className="group-card-header">
                 <div className="group-card-title">
                   <FolderCheck aria-hidden="true" size={18} />
-                  <h3>{groupSummary.name}</h3>
+                  <h3>{group.name}</h3>
                 </div>
-                <StatusPill status={groupSummary.status} />
+                <StatusPill status={status} />
               </div>
 
               <div className="group-card-metrics">
                 <div>
                   <span>Documents</span>
-                  <strong>{groupSummary.documentsComplete}</strong>
+                  <strong>
+                    {documentsComplete} of {group.documents.length}
+                  </strong>
                 </div>
                 <div>
                   <span>Fields</span>
-                  <strong>{groupSummary.fieldsComplete}</strong>
+                  <strong>
+                    {fieldsComplete} of {group.fields.length}
+                  </strong>
                 </div>
               </div>
 
-              <div className={`group-card-blockers ${groupSummary.blockers > 0 ? 'needs-attention' : ''}`}>
-                {groupSummary.blockers === 0 ? 'No blockers' : `${groupSummary.blockers} blockers`}
+              <div className={`group-card-blockers ${missingSummary ? 'needs-attention' : ''}`}>
+                {missingSummary || 'All documents verified · all fields confirmed'}
               </div>
 
-              {groupSummary.selected ? <div className="group-card-action">Opened in workspace</div> : null}
-            </article>
-          ))}
+              <div className="group-card-action">Open group</div>
+            </button>
+            );
+          })}
         </div>
-      </section>
+      </section> : null}
 
-      <section className="entered-workspace" aria-label="Applicant ID workspace">
+      {currentPage === 'drilldown' ? <section className="entered-workspace" aria-label={`${selectedGroup.name} workspace`}>
         <div className="workspace-breadcrumb" aria-label="Group workspace navigation">
           <div className="workspace-breadcrumb-path">
-            <button className="back-link" type="button" disabled>
+            <button className="back-link" type="button" onClick={handleBackToSummary}>
               <ArrowLeft aria-hidden="true" size={16} />
-              All document groups
+              Back to all document groups
             </button>
             <span aria-hidden="true">/</span>
-            <strong>Applicant ID</strong>
-            <StatusPill status="Incomplete" />
+            <strong>{selectedGroup.name}</strong>
+            <StatusPill status={getGroupStatus(selectedGroup)} />
           </div>
           <div className="summary-chips" aria-label="Selected group status">
-            <span className="summary-chip attention">2 documents need verification</span>
-            <span className="summary-chip attention">2 fields unchecked</span>
-            <span className="summary-chip attention">4 blockers</span>
+            {selectedGroupChips.map((chip) => (
+              <span className={`summary-chip ${selectedGroupBlockerCount > 0 ? 'attention' : 'complete'}`} key={chip}>
+                {chip}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -283,35 +876,128 @@ function App() {
             <section className="panel evidence-panel" aria-label="Document evidence">
               <div className="evidence-control-stack">
                 <div className="evidence-document-row">
-                  <div className="document-tabs" role="tablist" aria-label="Documents for Applicant ID">
-                    {applicantDocuments.map((documentItem) => (
+                  <div className="document-tabs" role="tablist" aria-label={`Documents for ${selectedGroup.name}`}>
+                    {selectedGroup.documents.map((documentItem) => {
+                      const isSelected = documentItem.id === selectedDocument.id;
+
+                      return (
                       <button
-                        className={`document-tab ${documentItem.selected ? 'selected' : ''}`}
+                        className={`document-tab ${isSelected ? 'selected' : ''}`}
                         type="button"
                         role="tab"
-                        aria-selected={documentItem.selected ? 'true' : 'false'}
-                        aria-disabled="true"
-                        key={documentItem.name}
+                        aria-selected={isSelected ? 'true' : 'false'}
+                        onClick={() => handleSelectDocument(documentItem)}
+                        key={documentItem.id}
                       >
                         <span className="document-tab-copy">
                           <span className="document-tab-name">{documentItem.name}</span>
                           <DocumentTabStatus state={documentItem.state} />
                         </span>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
-                <div className="evidence-verification-row" aria-label="Back of ID verification controls">
-                  <div className="selected-document-actions" aria-label="Back of ID decision controls">
-                    <button className="static-button success" type="button" disabled>
-                      <CheckCircle2 aria-hidden="true" size={16} />
-                      Verify
-                    </button>
-                    <button className="static-button warning" type="button" disabled>
-                      <MailWarning aria-hidden="true" size={16} />
-                      Reopen
-                    </button>
+                <div className="evidence-verification-row" aria-label={`${selectedDocument.name} verification controls`}>
+                  <div className="document-action-stack">
+                    <div className="selected-document-actions" aria-label={`${selectedDocument.name} decision controls`}>
+                      {selectedDocumentActions.canVerify ? (
+                        <button className="static-button success" type="button" onClick={handleVerifyDocument}>
+                          <CheckCircle2 aria-hidden="true" size={16} />
+                          Verify
+                        </button>
+                      ) : null}
+                      {selectedDocumentActions.canMarkUploaded ? (
+                        <button className="static-button" type="button" onClick={handleMarkDocumentUploaded}>
+                          <Upload aria-hidden="true" size={16} />
+                          Mark as uploaded
+                        </button>
+                      ) : null}
+                      {selectedDocumentActions.canReopen ? (
+                        <button className="static-button warning" type="button" onClick={handleStartReopen}>
+                          <MailWarning aria-hidden="true" size={16} />
+                          Reopen
+                        </button>
+                      ) : null}
+                      {selectedDocumentActions.canViewSentComment ? (
+                        <button className="static-button" type="button" onClick={handleToggleSentComment}>
+                          <MailWarning aria-hidden="true" size={16} />
+                          {sentCommentIsVisible ? 'Hide sent comment' : 'View sent comment'}
+                        </button>
+                      ) : null}
+                      {!selectedDocumentActions.canVerify && !selectedDocumentActions.canReopen ? (
+                        <span className="waiting-copy">
+                          {selectedDocument.state === 'Reopened'
+                            ? 'Waiting for applicant correction'
+                            : 'Waiting for applicant upload'}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    {activeDraftMatchesSelection ? (
+                      <div className="reopen-draft-panel">
+                        <label className="static-textarea-label" htmlFor="reopen-comment">
+                          Correction request comment
+                        </label>
+                        <textarea
+                          className={`static-textarea ${activeDraftIsInvalid && activeReopenDraft?.touched ? 'invalid' : ''}`}
+                          id="reopen-comment"
+                          ref={reopenCommentRef}
+                          value={activeReopenDraft.comment}
+                          onBlur={() => setActiveReopenDraft((currentDraft) => currentDraft ? { ...currentDraft, touched: true } : currentDraft)}
+                          onChange={(event) => handleReopenDraftChange(event.target.value)}
+                          placeholder="Describe what the candidate needs to correct."
+                        />
+                        {activeDraftIsInvalid && activeReopenDraft?.touched ? (
+                          <p className="validation-copy">Enter a comment before sending the correction request.</p>
+                        ) : null}
+                        <div className="reopen-draft-actions">
+                          <button className="static-button warning" type="button" disabled={activeDraftIsInvalid} onClick={handleSubmitReopen}>
+                            Send correction request
+                          </button>
+                          <button className="static-button" type="button" onClick={handleCancelReopen}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeAcceptanceDraftMatchesSelection ? (
+                      <div className="reopen-draft-panel absence-acceptance-panel">
+                        <label className="static-textarea-label" htmlFor="absence-acceptance-comment">
+                          Why is it ok not to upload this document?
+                        </label>
+                        <textarea
+                          className={`static-textarea ${activeAcceptanceDraftIsInvalid && activeAbsenceAcceptanceDraft?.touched ? 'invalid' : ''}`}
+                          id="absence-acceptance-comment"
+                          ref={reopenCommentRef}
+                          value={activeAbsenceAcceptanceDraft.comment}
+                          onBlur={() => setActiveAbsenceAcceptanceDraft((currentDraft) => currentDraft ? { ...currentDraft, touched: true } : currentDraft)}
+                          onChange={(event) => handleAbsenceAcceptanceDraftChange(event.target.value)}
+                          placeholder="Explain why the absence is acceptable for this application."
+                        />
+                        {activeAcceptanceDraftIsInvalid && activeAbsenceAcceptanceDraft?.touched ? (
+                          <p className="validation-copy">Enter a comment before accepting the missing document.</p>
+                        ) : null}
+                        <div className="reopen-draft-actions">
+                          <button className="static-button success" type="button" disabled={activeAcceptanceDraftIsInvalid} onClick={handleSubmitAbsenceAcceptance}>
+                            Accept without upload
+                          </button>
+                          <button className="static-button" type="button" onClick={handleCancelAbsenceAcceptance}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {selectedDocumentActions.canViewSentComment && sentCommentIsVisible && latestReviewerComment ? (
+                      <div className="sent-comment-panel">
+                        <span>Sent correction comment</span>
+                        <p>{latestReviewerComment.comment}</p>
+                        <time dateTime={latestReviewerComment.createdAt}>{formatTimestamp(latestReviewerComment.createdAt)}</time>
+                      </div>
+                    ) : null}
                   </div>
                   <div className="document-state-summary">
                     <StateBadge state={selectedDocument.state} />
@@ -319,54 +1005,98 @@ function App() {
                 </div>
 
                 <div className="evidence-file-row">
-                  <div className="file-tabs" role="tablist" aria-label="Uploaded files for Back of ID">
-                    {uploadedFiles.map((uploadedFile) => (
+                  <div className="file-tabs" role="tablist" aria-label={`Uploaded files for ${selectedDocument.name}`}>
+                    {selectedDocument.uploadedFiles.length > 0 ? selectedDocument.uploadedFiles.map((uploadedFile) => {
+                      const displayDateTime = getDisplayDateTime(uploadedFile.uploadedAt);
+                      const isSelected = uploadedFile.id === selectedFileId;
+
+                      return (
                       <button
-                        className={`file-tab ${uploadedFile.selected ? 'selected' : ''}`}
+                        className={`file-tab ${isSelected ? 'selected' : ''}`}
                         type="button"
                         role="tab"
-                        aria-selected={uploadedFile.selected ? 'true' : 'false'}
-                        aria-disabled="true"
-                        key={uploadedFile.name}
+                        aria-selected={isSelected ? 'true' : 'false'}
+                        onClick={() =>
+                          setSelectedFileIdByDocument((currentSelections) => ({
+                            ...currentSelections,
+                            [selectedDocument.id]: uploadedFile.id,
+                          }))
+                        }
+                        key={uploadedFile.id}
                       >
-                        <time dateTime={`${uploadedFile.date}T${uploadedFile.time}:00`}>
-                          <span>{uploadedFile.date}</span>
-                          <span>{uploadedFile.time}</span>
+                        <time dateTime={uploadedFile.uploadedAt}>
+                          <span>{displayDateTime.date}</span>
+                          <span>{displayDateTime.time}</span>
                         </time>
                       </button>
-                    ))}
+                      );
+                    }) : <span className="no-files-chip">No uploaded files</span>}
                   </div>
 
                   <div className="preview-file-header">
-                    <button className="static-button preview-fullscreen-button" type="button" aria-label="View full screen" disabled>
+                    <button className="static-button preview-fullscreen-button" type="button" aria-label="View full screen" disabled={!selectedFile}>
                       <Maximize2 aria-hidden="true" size={16} />
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="document-preview" aria-label="Static document preview placeholder">
-                <div className="preview-page-header">
-                  <span>State of Israel</span>
-                  <span>Identity document back side</span>
-                </div>
-                <div className="preview-line wide" />
-                <div className="preview-line medium" />
-                <div className="preview-block-grid">
-                  <div className="preview-box" />
-                  <div className="preview-box" />
-                  <div className="preview-box" />
-                </div>
-                <div className="preview-line short" />
-                <div className="preview-line medium" />
-                <div className="preview-footer">Readable scan · candidate name visible · ID number visible</div>
+              <div className={`document-preview ${selectedFile ? '' : 'no-preview'}`} aria-label="Document preview placeholder">
+                {selectedFile ? (
+                  <>
+                    <div className="preview-page-header">
+                      <span>{selectedGroup.name}</span>
+                      <span>{selectedFile.uploadLabel}</span>
+                    </div>
+                    <div className="preview-line wide" />
+                    <div className="preview-line medium" />
+                    <div className="preview-block-grid">
+                      <div className="preview-box" />
+                      <div className="preview-box" />
+                      <div className="preview-box" />
+                    </div>
+                    <div className="preview-line short" />
+                    <div className="preview-line medium" />
+                    <div className="preview-footer">
+                      <span>{selectedFile.filename}</span>
+                      <span>{formatTimestamp(selectedFile.uploadedAt)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="no-preview-message">
+                    <EyeOff aria-hidden="true" size={28} />
+                    <h3>No preview available</h3>
+                    <p>
+                      {selectedDocument.state === "Doesn't exist"
+                        ? 'Review the applicant comment as the evidence context for this document item.'
+                        : 'No uploaded file exists for this document item yet.'}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <article className="evidence-review-footer" aria-label="Selected document review actions">
-                {selectedDocument.comment ? (
+                {selectedDocument.applicantComment ? (
                   <div className="applicant-comment">
                     <span>Applicant comment</span>
-                    <p>{selectedDocument.comment}</p>
+                    <p>{selectedDocument.applicantComment}</p>
+                  </div>
+                ) : null}
+
+                {selectedDocument.absenceAcceptanceComments?.length ? (
+                  <div className="reviewer-comment-history">
+                    <span>Missing-document acceptance comment</span>
+                    <p>{selectedDocument.absenceAcceptanceComments[0].comment}</p>
+                    <time dateTime={selectedDocument.absenceAcceptanceComments[0].createdAt}>
+                      {formatTimestamp(selectedDocument.absenceAcceptanceComments[0].createdAt)}
+                    </time>
+                  </div>
+                ) : null}
+
+                {selectedDocumentNotifications.length > 0 ? (
+                  <div className="notification-feedback" role="status">
+                    <MailWarning aria-hidden="true" size={16} />
+                    <span>{selectedDocumentNotifications[0].message}</span>
                   </div>
                 ) : null}
               </article>
@@ -382,24 +1112,34 @@ function App() {
               </div>
 
               <div className="field-list">
-                {applicantFields.map((fieldItem) => (
+                {selectedGroup.fields.map((fieldItem) => (
                   <article className={`field-row ${fieldItem.checked ? 'checked' : 'unchecked'}`} key={fieldItem.label}>
                     <div className="field-label-block">
                       <h4>{fieldItem.label}</h4>
                       <p>{fieldItem.note}</p>
                     </div>
-                    <div className={`static-input ${fieldItem.edited ? 'edited' : ''}`}>{fieldItem.value}</div>
+                    <input
+                      className={`static-input ${fieldItem.editedInSession ? 'edited' : ''}`}
+                      type={fieldItem.inputType === 'date' ? 'date' : fieldItem.inputType === 'number' ? 'number' : 'text'}
+                      value={fieldItem.value}
+                      onChange={(event) => handleFieldValueChange(fieldItem.id, event.target.value)}
+                    />
                     <label className="checkbox-label">
-                      <input type="checkbox" checked={fieldItem.checked} readOnly />
+                      <input
+                        type="checkbox"
+                        checked={fieldItem.checked}
+                        onChange={(event) => handleFieldCheckedChange(fieldItem.id, event.target.checked)}
+                      />
                       {fieldItem.checked ? 'Confirmed' : 'Confirm'}
                     </label>
+                    {fieldItem.editedInSession ? <span className="edited-marker">Edited in this session</span> : null}
                   </article>
                 ))}
               </div>
             </section>
           </div>
         </div>
-      </section>
+      </section> : null}
     </main>
   );
 }

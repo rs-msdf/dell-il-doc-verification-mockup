@@ -1,10 +1,10 @@
 # Doc Verification Mockup
 
-This repository contains the completed Phase 2 medium-fidelity static UI mockup for the Dell IL Tech Leaders document verification reviewer workspace, plus Phase 3 planning for the clickable workflow prototype.
+This repository contains the Phase 3 clickable workflow prototype for the Dell IL Tech Leaders document verification reviewer workspace, built from the completed Phase 2 medium-fidelity static mockup.
 
-The UI is implemented as a Vite + React + TypeScript app at the repository root. Phase 1 workflow foundation notes live in `phase-1-workflow-foundation/`, the completed Phase 2 static mockup documentation lives in `phase-2-medium-fidelity-static-mockup/`, and Phase 3 clickable prototype planning lives in `phase-3-clickable-workflow-prototype/`.
+The UI is implemented as a frontend-only Vite + React + TypeScript app at the repository root. Phase 1 workflow foundation notes live in `phase-1-workflow-foundation/`, the completed Phase 2 static mockup documentation lives in `phase-2-medium-fidelity-static-mockup/`, and Phase 3 clickable prototype documentation lives in `phase-3-clickable-workflow-prototype/`.
 
-The current static screen shows a group overview, an opened Applicant ID workspace, document-type tabs with verification indicators, timestamp-only uploaded-file tabs, a large document preview, a compact focused status row, and a right-side field verification rail.
+The current prototype is split into two pages: a summary page with the five verification groups, and a selected-group drilldown page with a clear back button to return to the summary. The drilldown supports document and uploaded-file tab selection, allowed document decisions, required inline reopen comments with simulated candidate notification feedback, required acceptance comments for `Doesn't exist` documents, sent-comment viewing for reopened documents, editable application fields, independent field confirmation checkboxes, and derived group/application progress.
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ Start the local development server:
 npm run dev
 ```
 
-Vite will print a local URL in the terminal, usually `http://localhost:5173/`. Open that URL in a browser to view the Phase 2 static mockup.
+Vite will print a local URL in the terminal, usually `http://localhost:5173/`. Open that URL in a browser to view the Phase 3 clickable prototype.
 
 ## Build the UI
 
@@ -45,8 +45,8 @@ npm run preview
 
 - `index.html`: Vite HTML entry point.
 - `src/main.tsx`: React entry point.
-- `src/App.tsx`: Phase 2 reviewer workspace UI.
-- `src/styles.css`: Medium-fidelity Lightning-inspired styling.
+- `src/App.tsx`: Stateful Phase 3 reviewer workspace prototype.
+- `src/styles.css`: Lightning-inspired prototype styling and interaction states.
 - `phase-1-workflow-foundation/README.md`: Phase 1 workflow foundation and information architecture.
 - `phase-2-medium-fidelity-static-mockup/README.md`: Phase 2 context, deliverables, and implementation notes.
-- `phase-3-clickable-workflow-prototype/README.md`: Phase 3 requirements, interaction model, state model, validation plan, and build checklist.
+- `phase-3-clickable-workflow-prototype/README.md`: Phase 3 implementation notes, requirements, interaction model, state model, validation plan, and build checklist.

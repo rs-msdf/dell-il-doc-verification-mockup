@@ -38,6 +38,7 @@ type RequiredDocumentItem = {
   applicantComment: string;
   uploadedFiles: UploadedFile[];
   reviewerComments: ReviewerComment[];
+  absenceAcceptanceComments?: ReviewerComment[];
 };
 
 type UploadedFile = {
@@ -65,12 +66,13 @@ type ApplicationField = {
 | `Not uploaded` | None | No change | No |
 | `Uploaded` | Verify | `Verified` | No |
 | `Uploaded` | Reopen | `Reopened` | Yes |
-| `Doesn't exist` | Verify | `Verified` | No |
+| `Doesn't exist` | Verify | `Verified` | Yes |
 | `Doesn't exist` | Reopen | `Reopened` | Yes |
-| `Reopened` | None | No change | No |
+| `Reopened` | Verify | `Verified` | No |
+| `Verified` | Mark as uploaded | `Uploaded` | No |
 | `Verified` | Reopen | `Reopened` | Yes |
 
-`Doesn't exist` remains a candidate-side document state. The reviewer does not set a document to `Doesn't exist`; the reviewer can only accept it as verified or reopen it for correction.
+`Doesn't exist` remains a candidate-side document state. The reviewer does not set a document to `Doesn't exist`; the reviewer can only accept it as verified with an explanatory comment or reopen it for correction.
 
 ## 4. Unsupported transitions
 
@@ -78,8 +80,6 @@ The UI should not expose these as available actions:
 
 - `Not uploaded` to `Verified`.
 - `Not uploaded` to `Reopened`.
-- `Reopened` to `Verified` before an applicant replacement upload exists.
-- `Verified` to `Uploaded`.
 - Any reviewer action that changes uploaded file history.
 
 If a future stakeholder asks for one of these transitions, document the request as an open question instead of adding it silently.
@@ -142,6 +142,7 @@ type GroupBlockers = {
   unverifiedDocuments: RequiredDocumentItem[];
   uncheckedFields: ApplicationField[];
   pendingReopenComment: boolean;
+  pendingAbsenceAcceptanceComment: boolean;
 };
 ```
 
@@ -150,7 +151,8 @@ Rules:
 - `unverifiedDocuments` includes every document whose state is not `Verified`.
 - `uncheckedFields` includes every field whose `checked` value is false.
 - `pendingReopenComment` is true only when the selected group has an active invalid reopen draft.
-- Total blockers is the sum of unverified documents, unchecked fields, and pending reopen comment validation.
+- `pendingAbsenceAcceptanceComment` is true only when the selected group has an active invalid acceptance draft for a `Doesn't exist` document.
+- Total blockers is the sum of unverified documents, unchecked fields, pending reopen comment validation, and pending missing-document acceptance comment validation.
 
 ## 8. Derived display values
 
@@ -159,7 +161,7 @@ Group cards should derive:
 - Documents complete count.
 - Fields complete count.
 - Complete or incomplete status.
-- Blocker count.
+- Missing-work details, such as documents needing review and unchecked fields, instead of a total blocker count.
 
 Selected workspace should derive:
 

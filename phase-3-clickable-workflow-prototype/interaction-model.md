@@ -77,7 +77,7 @@ Changing the selected document updates:
 
 - `Not uploaded`: show that no file exists yet and no reviewer action is currently available.
 - `Doesn't exist`: show applicant comment as the evidence context, no preview, and available reviewer actions `Verify` and `Reopen`.
-- `Reopened`: show prior reviewer comment, simulated notification status, and waiting-for-applicant copy.
+- `Reopened`: show a clear action-area control for viewing the latest sent correction comment, preserve simulated notification status, and allow verification when the reviewer accepts the evidence.
 
 ## 4. Uploaded-file selection flow
 
@@ -99,16 +99,27 @@ Changing the selected document updates:
 
 When the reviewer clicks `Verify`:
 
-- If the selected document state is `Uploaded` or `Doesn't exist`, set state to `Verified`.
+- If the selected document state is `Uploaded` or `Reopened`, set state to `Verified`.
+- If the selected document state is `Doesn't exist`, reveal a required acceptance comment input directly under the document decision buttons before setting state to `Verified`.
+- On submitting a valid `Doesn't exist` acceptance comment, store the comment with timestamp-like mock metadata and set state to `Verified`.
 - Clear any active reopen-comment draft for that document.
 - Recalculate group completion and blockers.
 - Keep the selected document open so the reviewer can see the result.
+
+### Mark as uploaded
+
+When the reviewer clicks `Mark as uploaded`:
+
+- If the selected document state is `Verified`, set state back to `Uploaded`.
+- Preserve uploaded-file history and the selected uploaded file.
+- Clear any active reopen-comment draft for that document.
+- Recalculate group completion and blockers so an accidental verification can be corrected immediately.
 
 ### Reopen
 
 When the reviewer clicks `Reopen`:
 
-- Reveal a reopen comment input in the document action area.
+- Reveal a reopen comment input directly under the document decision buttons so the required field is visibly tied to the `Reopen` action.
 - Require a non-empty comment before enabling `Send correction request`.
 - On submit, set state to `Reopened`.
 - Store the reviewer comment with timestamp-like mock metadata.

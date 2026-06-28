@@ -40,13 +40,14 @@ Phase 2 should look like a credible reviewer workspace while remaining medium fi
 
 Use consistent badge treatments for document and group states.
 
+All needs-attention text treatments should use the same attention color and typography across incomplete status chips, document-tab `Needs review` labels, unchecked field labels, and selected-group summary chips.
+
 | State | Suggested treatment | Meaning |
 | --- | --- | --- |
 | Complete / `Verified` | Green badge or success icon | No blocker for that item. |
 | Incomplete / `Uploaded` | Blue or neutral attention badge | Review action is needed. |
-| `Not uploaded` | Gray or warning badge | Evidence is missing. |
+| `Not uploaded` / `Doesn't exist` | Matching warning badge | Evidence is missing or accepted as absent. |
 | `Reopened` | Orange warning badge | Candidate correction is needed or in progress. |
-| `Doesn't exist` | Neutral badge | No preview; decision relies on comments and context. |
 | Unchecked field | Neutral or warning marker | Field verification is still required. |
 
 Do not rely on color alone. Include text labels and simple icons where useful.
@@ -62,6 +63,7 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 ## Uploaded-file tab treatment
 
 - Show uploaded files as compact tabs with upload date and time only in the main comparison row.
+- Keep uploaded-file tabs visually subordinate to document tabs through lighter typography, slightly smaller sizing, and a softer selected accent.
 - Mark the selected file clearly and align it with the preview surface below.
 - Use horizontal overflow treatment so the pattern can scale beyond the two static entries.
 - Preserve upload history instead of replacing older submissions visually.
