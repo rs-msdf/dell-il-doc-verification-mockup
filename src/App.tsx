@@ -6,7 +6,6 @@ import {
   EyeOff,
   FileText,
   FolderCheck,
-  Info,
   MailWarning,
   Maximize2,
   PencilLine,
@@ -46,15 +45,6 @@ type FieldItem = {
   checked: boolean;
   note: string;
   edited?: boolean;
-};
-
-type SupportingPanel = {
-  title: string;
-  status: 'Complete' | 'Incomplete';
-  summary: string;
-  documents: Array<{ name: string; state: DocumentState }>;
-  fields: Array<{ label: string; checked: boolean }>;
-  context: string;
 };
 
 const groupSummaries: GroupSummary[] = [
@@ -154,40 +144,6 @@ const applicantFields: FieldItem[] = [
     checked: true,
     edited: true,
     note: 'Reviewer adjusted value after evidence review.',
-  },
-];
-
-const supportingPanels: SupportingPanel[] = [
-  {
-    title: 'Parent 2 ID',
-    status: 'Incomplete',
-    summary: 'Correction state and comment-only review context.',
-    documents: [
-      { name: 'ID', state: 'Verified' },
-      { name: 'Back of ID', state: 'Reopened' },
-      { name: 'ID appendix', state: "Doesn't exist" },
-    ],
-    fields: [{ label: 'Number of siblings under 24 years of age', checked: true }],
-    context: 'Back of ID has an existing reopen comment. ID appendix has no preview and relies on applicant comment context.',
-  },
-  {
-    title: 'Applicant Income',
-    status: 'Incomplete',
-    summary: 'Financial review still needs documents and field verification.',
-    documents: [
-      { name: 'Income statement', state: 'Uploaded' },
-      { name: 'Benefits statement', state: 'Not uploaded' },
-    ],
-    fields: [{ label: 'Applicant income', checked: false }],
-    context: 'Income statement has multiple submissions. Benefits statement has no preview because no file is uploaded.',
-  },
-  {
-    title: 'Applicant Disability Status',
-    status: 'Complete',
-    summary: 'Simple complete group with one document and one field.',
-    documents: [{ name: 'Disability certificate', state: 'Verified' }],
-    fields: [{ label: 'Applicant disability percentage', checked: true }],
-    context: 'Disability certificate is verified and the disability percentage field is checked.',
   },
 ];
 
@@ -370,23 +326,6 @@ function App() {
                 </div>
               </section>
 
-              <section className="panel file-panel" aria-labelledby="files-heading">
-                <div className="section-title-row">
-                  <Upload aria-hidden="true" size={18} />
-                  <h3 id="files-heading">Uploaded Files</h3>
-                </div>
-                <div className="file-list" role="list" aria-label="Uploaded file history for Back of ID">
-                  {uploadedFiles.map((uploadedFile) => (
-                    <div className={`file-row ${uploadedFile.selected ? 'selected' : ''}`} role="listitem" key={uploadedFile.name}>
-                      <div>
-                        <strong>{uploadedFile.name}</strong>
-                        <span>{uploadedFile.label}</span>
-                      </div>
-                      <time dateTime={uploadedFile.date}>{uploadedFile.date}</time>
-                    </div>
-                  ))}
-                </div>
-              </section>
             </div>
 
             <section className="panel preview-panel" aria-labelledby="preview-heading">
@@ -402,6 +341,22 @@ function App() {
                   <Maximize2 aria-hidden="true" size={16} />
                   View full screen
                 </button>
+              </div>
+              <div className="file-tabs" role="tablist" aria-label="Uploaded files for Back of ID">
+                {uploadedFiles.map((uploadedFile) => (
+                  <button
+                    className={`file-tab ${uploadedFile.selected ? 'selected' : ''}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={uploadedFile.selected ? 'true' : 'false'}
+                    aria-disabled="true"
+                    key={uploadedFile.name}
+                  >
+                    <span>{uploadedFile.label}</span>
+                    <strong>{uploadedFile.name}</strong>
+                    <time dateTime={uploadedFile.date}>{uploadedFile.date}</time>
+                  </button>
+                ))}
               </div>
               <div className="document-preview" aria-label="Static document preview placeholder">
                 <div className="preview-page-header">
@@ -438,64 +393,12 @@ function App() {
                   <div className={`static-input ${fieldItem.edited ? 'edited' : ''}`}>{fieldItem.value}</div>
                   <label className="checkbox-label">
                     <input type="checkbox" checked={fieldItem.checked} readOnly />
-                    Verified
+                    {fieldItem.checked ? 'Confirmed' : 'Confirm'}
                   </label>
                 </article>
               ))}
             </div>
           </section>
-        </div>
-      </section>
-
-      <section className="supporting-section supporting-section-reference" aria-labelledby="supporting-heading">
-        <div className="supporting-header">
-          <div>
-            <p className="eyebrow">Reference coverage</p>
-            <h2 id="supporting-heading">Other Static Group States</h2>
-          </div>
-          <p>Lower-priority examples preserve the required reopened, doesn't-exist, and complete-group states.</p>
-        </div>
-        <div className="supporting-grid">
-          {supportingPanels.map((panel) => (
-            <article className="support-panel" key={panel.title}>
-              <div className="row-header">
-                <div>
-                  <h3>{panel.title}</h3>
-                  <p>{panel.summary}</p>
-                </div>
-                <StatusPill status={panel.status} />
-              </div>
-
-              <div className="mini-section">
-                <h4>Documents</h4>
-                <div className="mini-stack">
-                  {panel.documents.map((documentItem) => (
-                    <div className="mini-row" key={`${panel.title}-${documentItem.name}`}>
-                      <span>{documentItem.name}</span>
-                      <StateBadge state={documentItem.state} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mini-section">
-                <h4>Fields</h4>
-                {panel.fields.map((fieldItem) => (
-                  <div className="mini-row" key={`${panel.title}-${fieldItem.label}`}>
-                    <span>{fieldItem.label}</span>
-                    <span className={`field-state ${fieldItem.checked ? 'checked' : 'unchecked'}`}>
-                      {fieldItem.checked ? 'Checked' : 'Unchecked'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="context-note">
-                <Info aria-hidden="true" size={16} />
-                <span>{panel.context}</span>
-              </div>
-            </article>
-          ))}
         </div>
       </section>
     </main>

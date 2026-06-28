@@ -26,8 +26,7 @@ Phase 2 should not re-decide the basic workflow foundation unless a static mocku
 - Representative applicant data and document states across all five groups.
 - Static display of group progress by completion count.
 - Static display of complete and incomplete group statuses.
-- Selected group view with expected supporting documents, document states, applicant comments, uploaded-file list, preview area, field values, editable inputs, verified checkboxes, and missing completion items.
-- Supporting static panels for required states that are not visible in the main Applicant ID screen.
+- Selected group view with expected supporting documents, document states, applicant comments, uploaded-file tabs in the preview pane, preview area, field values, editable inputs, compact field confirmation checkboxes, and missing completion items.
 - Static visual treatment for progress, blockers, comments, and decision states.
 - Salesforce Lightning Design System-inspired layout, spacing, typography, badges, buttons, forms, and panels.
 - Desktop-only layout.
@@ -54,14 +53,12 @@ The main static screen must include:
 - Document review area showing expected document items for the selected group.
 - Current document state for each selected-group document item.
 - Applicant comments visible for each selected-group document item.
-- Scrollable/selectable uploaded-file list for a selected document item with multiple files.
+- Selectable uploaded-file tabs in the preview pane for a selected document item with multiple files.
 - Selected uploaded file marker.
 - Document preview region for the selected uploaded file, including a static `View full screen` affordance.
-- No-preview treatment for `Doesn't exist` documents in at least one representative state.
-- Application field review area with submitted values, editable controls, and separate verified checkboxes.
+- Application field review area with submitted values, editable controls, and compact field confirmation checkboxes that read `Confirmed` when checked and `Confirm` when unchecked.
 - Inline blocker visibility through the selected-group summary, group and document states, unchecked fields, and reopen comments when relevant.
-
-Supporting static panels must show representative states that are not visible in the selected Applicant ID screen, especially `Reopened`, `Doesn't exist`, and simple complete-group states.
+The main screen should stay focused on the active reviewer workflow. Lower-priority reference coverage examples should remain in planning artifacts or sample data rather than appearing as bottom-of-page UI panels.
 
 ## 6. Required representative states
 
@@ -84,7 +81,7 @@ The static mockup plan must include examples of:
 
 - The Phase 2 deliverable is an actual static UI build, not documentation only.
 - The main screen should show the group overview first, with Applicant ID represented as the opened focused group workspace.
-- The UI should include lower-priority supporting static panels for states that live outside the selected Applicant ID group.
+- The UI should omit lower-priority supporting static panels for states that live outside the selected Applicant ID group because they added visual clutter.
 - Mockup review exposed visual clutter from persistent group navigation, so Phase 2 now uses a group-first navigation model with no document group pane inside the focused group workspace.
 - Uploaded file entries should use explicit upload reason labels.
 - The styling should be loosely Salesforce Lightning-inspired while remaining a custom mockup.

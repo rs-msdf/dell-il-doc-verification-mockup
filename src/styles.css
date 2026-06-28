@@ -60,8 +60,7 @@ p {
 
 .app-header,
 .group-overview,
-.entered-workspace,
-.supporting-section {
+.entered-workspace {
   max-width: 1560px;
   margin: 0 auto;
 }
@@ -90,10 +89,7 @@ p {
 .group-row-meta,
 .row-header,
 .control-strip,
-.checkbox-label,
-.supporting-header,
-.context-note,
-.mini-row {
+.checkbox-label {
   display: flex;
   align-items: center;
 }
@@ -129,8 +125,6 @@ h1 {
 .summary-copy,
 .preview-title-row p,
 .field-label-block p,
-.supporting-header p,
-.support-panel p,
 .document-row p {
   color: var(--muted);
 }
@@ -185,8 +179,7 @@ h1 {
 }
 
 .panel,
-.selected-summary,
-.support-panel {
+.selected-summary {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -215,8 +208,7 @@ h1 {
 
 .group-card-grid,
 .document-list,
-.field-list,
-.mini-stack {
+.field-list {
   display: grid;
   gap: 10px;
 }
@@ -362,8 +354,7 @@ h1 {
 }
 
 .group-row-main,
-.row-header,
-.mini-row {
+.row-header {
   justify-content: space-between;
   gap: 12px;
 }
@@ -426,8 +417,7 @@ h1 {
   padding: 16px;
 }
 
-.selected-summary h2,
-.supporting-header h2 {
+.selected-summary h2 {
   margin-bottom: 6px;
   font-size: 22px;
 }
@@ -487,8 +477,7 @@ h1 {
 }
 
 .document-row h4,
-.field-row h4,
-.mini-section h4 {
+.field-row h4 {
   font-size: 13px;
   font-weight: 720;
 }
@@ -565,46 +554,6 @@ h1 {
   min-height: 52px;
 }
 
-.file-list {
-  display: grid;
-  gap: 8px;
-  max-height: 148px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.file-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: var(--surface-muted);
-}
-
-.file-row.selected {
-  border-color: #7fb5e8;
-  background: #f1f7fd;
-}
-
-.file-row strong,
-.file-row span {
-  display: block;
-}
-
-.file-row strong {
-  overflow-wrap: anywhere;
-  font-size: 13px;
-}
-
-.file-row span,
-.file-row time {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
 .preview-panel {
   min-height: 540px;
 }
@@ -622,6 +571,48 @@ h1 {
 
 .preview-fullscreen-button {
   flex: 0 0 auto;
+}
+
+.file-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+
+.file-tab {
+  display: grid;
+  gap: 3px;
+  min-width: 230px;
+  max-width: 300px;
+  padding: 9px 12px 10px;
+  text-align: left;
+  color: var(--muted);
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+}
+
+.file-tab.selected {
+  color: var(--text);
+  background: #ffffff;
+  border-color: #7fb5e8;
+  box-shadow: inset 0 3px 0 var(--brand);
+}
+
+.file-tab span,
+.file-tab time {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.file-tab strong {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 13px;
 }
 
 .document-preview {
@@ -739,81 +730,6 @@ h1 {
   width: 16px;
   height: 16px;
   accent-color: var(--success);
-}
-
-.supporting-section {
-  margin-top: 16px;
-  padding-bottom: 22px;
-}
-
-.supporting-section-reference {
-  padding: 16px;
-  background: #eef2f7;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.supporting-header {
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 12px;
-}
-
-.supporting-header > p {
-  max-width: 520px;
-  text-align: right;
-}
-
-.supporting-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.support-panel {
-  padding: 16px;
-}
-
-.support-panel .row-header {
-  align-items: flex-start;
-}
-
-.support-panel h3 {
-  margin-bottom: 6px;
-  font-size: 17px;
-}
-
-.mini-section {
-  margin-top: 16px;
-}
-
-.mini-section h4 {
-  margin-bottom: 8px;
-}
-
-.mini-row {
-  min-height: 34px;
-  padding: 8px 10px;
-  background: var(--surface-muted);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.mini-row > span:first-child {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.context-note {
-  gap: 8px;
-  margin-top: 16px;
-  padding: 10px;
-  color: #34445d;
-  background: var(--brand-soft);
-  border: 1px solid #b9d7f2;
-  border-radius: 7px;
-  font-size: 13px;
-  line-height: 1.4;
 }
 
 @media (max-width: 1280px) {

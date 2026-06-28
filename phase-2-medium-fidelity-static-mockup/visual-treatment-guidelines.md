@@ -18,7 +18,7 @@ Phase 2 should look like a credible reviewer workspace while remaining medium fi
 - No persistent group navigation pane inside the focused group workspace; use a compact breadcrumb/back affordance instead.
 - Selected group summary at the top of the focused group workspace.
 - Document review and document preview side by side, with field review lower in the focused workflow.
-- Uploaded file list adjacent to document review.
+- Uploaded-file tabs inside the document preview pane, directly above the document display area.
 - Document preview large enough to feel reviewable.
 - Missing items visible without scrolling away from the selected group summary when possible.
 
@@ -57,16 +57,17 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 - Reopen comment area can be visible as a disabled/static text area placeholder.
 - Applicant comments should be visually distinct from reviewer decision controls.
 
-## Uploaded-file list treatment
+## Uploaded-file tab treatment
 
-- Show uploaded files as compact rows with filename, upload date, and upload reason label.
-- Mark the selected file clearly.
-- Use a scrollable container treatment even if the static example only shows two entries.
+- Show uploaded files as compact tabs with filename, upload date, and upload reason label.
+- Mark the selected file clearly and align it with the preview surface below.
+- Use horizontal overflow treatment so the pattern can scale beyond the two static entries.
 - Preserve upload history instead of replacing older submissions visually.
 
 ## Preview treatment
 
 - Use a document-like preview surface with filename and metadata in the preview header.
+- Place uploaded-file tabs between the preview header and the document surface so it is clear which file controls the visible preview.
 - For uploaded files, show a light page canvas with document-like content blocks.
 - Include a compact `View full screen` action in the preview header so reviewers can identify the larger-inspection path.
 - For `Doesn't exist`, show an empty preview state that points the reviewer to applicant comments and group context.
@@ -75,8 +76,8 @@ Do not rely on color alone. Include text labels and simple icons where useful.
 
 ## Field review treatment
 
-- Each field row should show label, current value, editable input, and a separate verified checkbox.
-- Checked and unchecked states should be easy to scan.
+- Each field row should show label, current value, editable input, and a compact confirmation checkbox labeled `Confirmed` when checked or `Confirm` when unchecked.
+- Checked and unchecked states should be easy to scan without making unchecked rows read as already confirmed.
 - Edited values should not visually imply automatic verification.
 - Keep field rows aligned so a reviewer can compare values quickly.
 

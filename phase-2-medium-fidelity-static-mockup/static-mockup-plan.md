@@ -9,7 +9,7 @@ The screen should be medium fidelity: realistic hierarchy, spacing, labels, stat
 Confirmed build direction:
 
 - Build the actual static UI for Phase 2 now.
-- Use a group overview, one opened Applicant ID workspace, and supporting static panels for other group states.
+- Use a group overview and one opened Applicant ID workspace; omit lower-priority reference coverage panels from the UI.
 - Keep the fictional Dana Levi sample data.
 - Use explicit uploaded-file labels for traceability.
 - Keep the style loosely Salesforce Lightning-inspired rather than a strict Salesforce clone.
@@ -26,11 +26,11 @@ Confirmed build direction:
 +------------------------------------------------------------------------------------------------+
 | Applicant ID Summary | 2 documents need verification | 2 fields unchecked | 4 blockers          |
 +------------------------------------------------------------------------------------------------+
-| Document Review + Uploaded Files              | Document Preview                                |
-| Expected documents, comments, controls         | Selected file review surface                    |
+| Document Review                               | Document Preview + Uploaded File Tabs           |
+| Expected documents, comments, controls         | File tabs and selected file review surface       |
 +----------------------------------------------+-------------------------------------------------+
 | Field Consistency Review                                                                          |
-| Field rows with editable inputs and separate verified checkboxes                                  |
+| Field rows with editable inputs and compact `Confirmed` / `Confirm` checkbox labels               |
 +------------------------------------------------------------------------------------------------+
 ```
 
@@ -90,7 +90,7 @@ The selected group document list should show three document items:
 | Back of ID | `Uploaded` | Attention badge, multiple uploaded files, selected latest file. |
 | ID appendix | `Not uploaded` | Missing badge, applicant comment visible, preview unavailable. |
 
-The selected document item should be `Back of ID` so the mockup can demonstrate the scrollable uploaded-file list and selected preview.
+The selected document item should be `Back of ID` so the mockup can demonstrate uploaded-file tabs in the preview pane and the selected preview.
 
 For each document item, show:
 
@@ -101,9 +101,9 @@ For each document item, show:
 - Decision controls as static disabled or visual-only buttons, such as `Verify` and `Reopen`, without interaction.
 - Reopen comment area placeholder visible near the reopen action.
 
-## Uploaded file list
+## Uploaded file tabs
 
-The selected `Back of ID` document should show multiple uploaded files.
+The selected `Back of ID` document should show multiple uploaded files as tabs at the top of the `Document Preview` pane, directly above the document display area. This keeps file selection visually attached to the preview it controls.
 
 File entries:
 
@@ -133,14 +133,14 @@ For the selected `Applicant ID` group, show all six fields:
 
 | Field | Submitted/current value | Static field state |
 | --- | --- | --- |
-| First name | Dana | Verified checked. |
-| Last name | Levi | Verified checked. |
-| ID number | 031245678 | Verified checked. |
-| Date of birth | 1999-04-18 | Unchecked. |
-| Marital status | Single | Unchecked. |
-| Number of children under 18 | 0 | Edited value control visible, verified checked. |
+| First name | Dana | Checkbox checked and labeled `Confirmed`. |
+| Last name | Levi | Checkbox checked and labeled `Confirmed`. |
+| ID number | 031245678 | Checkbox checked and labeled `Confirmed`. |
+| Date of birth | 1999-04-18 | Checkbox unchecked and labeled `Confirm`. |
+| Marital status | Single | Checkbox unchecked and labeled `Confirm`. |
+| Number of children under 18 | 0 | Edited value control visible, checkbox checked and labeled `Confirmed`. |
 
-Each row must show the editable value control separately from the verified checkbox.
+Each row must show the editable value control separately from the field confirmation checkbox. The label should be compact and state-aware: `Confirmed` when checked, `Confirm` when unchecked.
 
 ## Missing items / blockers
 
@@ -148,7 +148,7 @@ For the selected `Applicant ID` group, do not add a separate `Blocker Details` p
 
 - The selected summary shows `4 blockers` alongside the document and field missing summaries.
 - Document rows expose unverified document blockers through their current states: Back of ID as `Uploaded` and ID appendix as `Not uploaded`.
-- Field rows expose unchecked field blockers through their unchecked verified checkboxes.
+- Field rows expose unchecked field blockers through unchecked `Confirm` checkboxes.
 - No-preview context remains attached to the relevant document or supporting static state instead of appearing in a separate blocker block.
 - Required reopen comment blockers should appear next to the relevant reopen action when a reopen state is represented.
 
@@ -160,19 +160,11 @@ Controls should look like real controls but should not imply interactivity in Ph
 - Reopen document.
 - Reopen comment input.
 - Field editable inputs.
-- Field verified checkboxes.
+- Field confirmation checkboxes.
 - Group overview cards.
 
 Phase 3 will make these controls clickable and stateful.
 
-## Supporting static panels
+## Reference coverage
 
-Because the main selected screen is Applicant ID, the static UI should also include compact supporting panels for representative states that live in other groups:
-
-| Supporting panel | Purpose | Required states shown |
-| --- | --- | --- |
-| Parent 2 ID | Show correction and no-preview edge cases. | `Reopened`, `Doesn't exist`, applicant-comment-only context. |
-| Applicant Income | Show incomplete financial review. | `Uploaded`, `Not uploaded`, unchecked income field. |
-| Applicant Disability Status | Show a simple complete group. | Complete group, `Verified` document, checked field. |
-
-These panels should be static summaries, not separate full screens. They exist to make Phase 2 state coverage visible without turning the static mockup into an interactive prototype.
+The UI should not include bottom reference coverage panels. Representative states that are outside the selected `Applicant ID` workflow remain captured in planning artifacts and sample data, but the rendered mockup should prioritize the primary reviewer workspace and avoid extra lower-priority panels.

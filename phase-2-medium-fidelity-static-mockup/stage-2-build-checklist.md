@@ -12,20 +12,19 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - [ ] Selected group summary shows group name, state, expected documents, related fields, and missing summary.
 - [ ] Document review area shows expected document items for the selected group.
 - [ ] Document rows show document name, current state, applicant comment, and file count when relevant.
-- [ ] Uploaded-file list is visible for a document with multiple files.
-- [ ] Uploaded-file list preserves upload history and marks one selected file.
-- [ ] Uploaded-file entries show explicit upload labels such as `Initial upload` and `Applicant replacement`.
+- [ ] Uploaded-file tabs are visible inside the Document Preview pane for a document with multiple files.
+- [ ] Uploaded-file tabs preserve upload history and mark one selected file.
+- [ ] Uploaded-file tabs show explicit upload labels such as `Initial upload` and `Applicant replacement`.
 - [ ] Document preview region shows the selected uploaded file and a `View full screen` affordance.
-- [ ] No-preview treatment is represented for `Doesn't exist` or no-file conditions.
 - [ ] Field review area shows field labels and current values.
 - [ ] Field values appear editable even though the mockup is static.
-- [ ] Verified checkboxes are separate from editable value controls.
-- [ ] Unchecked fields are visibly unverified.
+- [ ] Field confirmation checkboxes are separate from editable value controls.
+- [ ] Field rows use compact checkbox labels: `Confirmed` when checked and `Confirm` when unchecked.
 - [ ] Blocker count is visible in the selected group summary.
 - [ ] Document rows make unverified document blockers apparent through document name and current state.
 - [ ] Field rows make unchecked field blockers apparent through field label and unchecked verification state.
 - [ ] Required reopen comment blockers appear next to the relevant reopen action when a reopen state is represented.
-- [ ] Supporting static panels show Parent 2 ID, Applicant Income, and Applicant Disability Status state examples.
+- [ ] The screen omits bottom reference coverage panels so the primary Applicant ID workflow remains visually focused.
 
 ## Representative state checklist
 
@@ -64,7 +63,6 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - Can a reviewer distinguish document state from uploaded-file history?
 - Can a reviewer see that field editing and field verification are separate actions?
 - Can a reviewer identify where applicant comments belong for each document?
-- Can a reviewer understand why a `Doesn't exist` document has no preview?
 - Does the visual hierarchy support reviewing 10-20 documents without excessive context switching?
 - Is the screen structure still feasible to translate into future LWC components?
 
@@ -74,6 +72,6 @@ Use this checklist when building and reviewing the medium-fidelity static mockup
 - Convert static document rows and uploaded files into selectable items.
 - Implement allowed reviewer document transitions only.
 - Enforce required comments for reopen actions.
-- Preserve field editing separately from verified checkbox state.
+- Preserve field editing separately from the field confirmation checkbox state.
 - Recalculate group completion when document and field states change.
 - Keep blocker categories in sync with real state.

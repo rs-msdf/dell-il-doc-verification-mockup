@@ -10,14 +10,14 @@ This matrix identifies where each required Phase 2 state should appear in the st
 | Group progress count | Header shows `2 of 5 groups complete`. |
 | Expected supporting documents | Applicant ID summary lists ID, back of ID, ID appendix. |
 | Current document states | Applicant ID document rows show `Verified`, `Uploaded`, and `Not uploaded`. |
-| Scrollable uploaded-file list | Back of ID selected with two files shown in a scrollable/list container. |
+| Uploaded-file tabs | Back of ID selected with two files shown as tabs above the document preview. |
 | Selected uploaded file | `back-id-replacement-2026-06-24.pdf` marked selected. |
 | Applicant comments | Visible on all Applicant ID document rows or selected document details. |
 | Document preview | Back of ID selected file preview shown with a static `View full screen` affordance. |
 | Current field values | Six Applicant ID fields shown with current values. |
 | Editable field inputs | All field values appear in input-like controls. |
-| Separate verified checkboxes | Each field row has its own checkbox separate from the input. |
-| Unchecked fields obvious | Date of birth and marital status are unchecked in their field rows and counted in the selected-group summary. |
+| Separate field confirmation checkboxes | Each field row has its own confirmation checkbox separate from the input. |
+| Unchecked fields obvious | Date of birth and marital status show unchecked `Confirm` boxes and are counted in the selected-group summary. |
 | Missing completion items | Summary chips, document states, and unchecked field rows expose two unverified documents and two unchecked fields. |
 
 ## Supporting static states across all groups
@@ -33,8 +33,8 @@ This matrix identifies where each required Phase 2 state should appear in the st
 | `Doesn't exist` document | Parent 2 ID / ID appendix | Neutral status, no preview, applicant-comment context. |
 | Multiple uploaded files | Applicant ID / Back of ID; Applicant Income / Income statement | File history preserved. |
 | Applicant comment-only review context | Parent 2 ID / ID appendix | No preview, comment-only context. |
-| Checked field | Applicant ID / First name; Parent 1 sibling field; Disability percentage | Checkbox visibly checked. |
-| Unchecked field | Applicant ID / Date of birth; Applicant Income / Applicant income | Checkbox visibly unchecked and accounted for in summary copy. |
+| Checked field | Applicant ID / First name; Parent 1 sibling field; Disability percentage | Checkbox visibly checked and labeled `Confirmed`. |
+| Unchecked field | Applicant ID / Date of birth; Applicant Income / Applicant income | Checkbox visibly unchecked, labeled `Confirm`, and accounted for in summary copy. |
 | Edited field value | Applicant ID / Number of children under 18 | Input-like control visible; checkbox remains a separate decision. |
 
 ## Static example priorities
