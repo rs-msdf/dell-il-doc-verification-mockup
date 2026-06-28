@@ -2,10 +2,10 @@
 
 ## 1. Prepare review
 
-- [ ] Confirm the local prototype runs from the committed Phase 3 state.
+- [x] Confirm the local prototype runs from the committed Phase 3 state.
 - [ ] Select review participants and schedule stakeholder walkthrough.
 - [ ] Confirm which scenarios from `stakeholder-review-plan.md` will be tested.
-- [ ] Prepare the observation log and decision log.
+- [x] Prepare the observation log and decision log.
 
 ## 2. Run stakeholder review
 
@@ -18,11 +18,12 @@
 
 ## 3. Run density and accessibility review
 
-- [ ] Complete the density checklist.
-- [ ] Complete keyboard and focus checks.
+- [x] Run automated responsive, navigation, and focus baseline checks.
+- [ ] Complete the density checklist with stakeholder or reviewer input.
+- [ ] Complete full keyboard and focus checks.
 - [ ] Complete labels and semantics checks.
-- [ ] Complete responsive behavior checks.
-- [ ] Record visual hierarchy or scanability risks.
+- [x] Complete responsive horizontal-overflow checks.
+- [x] Record visual hierarchy or scanability risks.
 
 ## 4. Refine implementation plan
 

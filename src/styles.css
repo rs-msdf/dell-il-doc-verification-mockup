@@ -36,7 +36,6 @@
 
 body {
   margin: 0;
-  min-width: 1180px;
   color: var(--text);
   background: #f4f6f9;
 }
@@ -1158,5 +1157,65 @@ h1 {
 
   .file-tab {
     min-width: 112px;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace-shell {
+    padding: 12px;
+  }
+
+  .app-header,
+  .group-overview-header,
+  .workspace-breadcrumb {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .header-status,
+  .summary-chips {
+    justify-content: flex-start;
+  }
+
+  .group-card-grid,
+  .workspace-review-grid,
+  .review-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .evidence-panel {
+    grid-template-rows: auto auto auto;
+    min-height: auto;
+  }
+
+  .evidence-control-stack,
+  .evidence-document-row,
+  .evidence-verification-row,
+  .evidence-file-row,
+  .preview-file-header,
+  .document-preview,
+  .evidence-review-footer,
+  .document-action-stack,
+  .selected-document-actions,
+  .document-state-summary,
+  .applicant-comment {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .document-tabs,
+  .file-tabs {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .document-tab {
+    min-width: 148px;
+  }
+
+  .document-preview {
+    min-height: 420px;
   }
 }

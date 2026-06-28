@@ -47,8 +47,8 @@
 
 | Area | Pass / Risk / Fail | Notes | Follow-up |
 | --- | --- | --- | --- |
-| Density |  |  |  |
-| Keyboard and focus |  |  |  |
-| Labels and semantics |  |  |  |
-| Responsive behavior |  |  |  |
-| Visual quality |  |  |  |
+| Density | Risk | Current sample covers all five groups and major edge cases, but larger 10-20 document scanability still needs stakeholder review. | Run summary and drilldown walkthrough with a denser case or reviewer proxy. |
+| Keyboard and focus | Risk | Automated spot checks confirmed keyboard focus reaches group cards and reopen moves focus to the textarea. Full keyboard order review remains open. | Complete manual tab-order review across document tabs, file tabs, actions, fields, and back navigation. |
+| Labels and semantics | Risk | ARIA labels and tab roles exist in the prototype, but assistive-technology expectations have not been fully reviewed. | Review accessible names, status announcement expectations, and validation-message behavior. |
+| Responsive behavior | Pass | Initial horizontal overflow at tablet and mobile widths was fixed and validated at 1024px and 390px. | Recheck after any future layout changes. |
+| Visual quality | Risk | Attention-state styling is consistent from Phase 3, but wording and visual hierarchy still need stakeholder review. | Review with operations stakeholders for fairness, clarity, and accountability. |

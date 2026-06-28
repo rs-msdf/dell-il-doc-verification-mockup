@@ -24,6 +24,7 @@ Phase 4 should use the current runnable prototype as the review artifact. The go
 - `density-accessibility-checklist.md`: Checklist for scanning density, keyboard access, focus, responsiveness, and state visibility.
 - `lwc-component-inventory.md`: Candidate LWC component boundaries and implementation notes.
 - `production-readiness-questions.md`: Production-only questions that should not be solved inside the frontend mockup.
+- `review-results.md`: Phase 4 review findings, validation results, and follow-up classification.
 - `stage-4-execution-checklist.md`: Practical checklist for completing Phase 4.
 
 ## Phase 4 outcome target
