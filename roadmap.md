@@ -97,67 +97,46 @@ Turn the static mockup into a clickable prototype that validates navigation, rev
 - Reopen flows visibly require comments before completion.
 - Group completion responds correctly to document and field changes.
 
-## Stage 4: High-Fidelity Reviewer Experience
+## Stage 4: UX Hardening and LWC Readiness
 
 ### Goal
-Refine the prototype into a polished, high-fidelity experience that feels production-adjacent while remaining focused on mockup validation.
+Use the completed Phase 3 prototype as the review artifact for stakeholder feedback, then harden the experience for larger applications, accessibility, wording clarity, and future Salesforce LWC implementation planning.
 
 ### Key activities
-- Apply a Lightning-compatible visual language for layout, controls, status badges, forms, comments, and document panels.
-- Refine density and scanning behavior for 10-20 document applications.
-- Improve reviewer confidence with explicit decision-state visibility and traceable comments.
-- Add realistic empty, blocked, and edge states:
-  - Not uploaded document.
-  - Doesn't-exist document with applicant comment only.
-  - Reopened document awaiting candidate correction.
-  - Uploaded document needing reviewer action.
-  - Verified document available for reopening.
-- Add validation messaging for required reopen comments and incomplete groups.
+- Review the Phase 3 prototype with stakeholders and record confusing states, unclear wording, or missing reviewer accountability cues.
+- Refine density and scanning behavior for larger 10-20 document applications without losing required decisions.
+- Review accessibility, keyboard navigation, responsive behavior, and focus states for the current two-page workflow.
+- Tighten the Lightning-compatible visual language where the prototype diverges from likely Salesforce patterns.
+- Map the current prototype into likely LWC component boundaries, including group cards, document tabs, file tabs, preview panels, decision controls, comment panels, field rows, and progress indicators.
 - Review wording for fairness, clarity, and reviewer accountability.
+- Identify production-only questions that should not be solved inside the mockup, such as persistence, notification infrastructure, audit history, permissions, and integration with uploaded file storage.
 
 ### Deliverables
-- High-fidelity mockup screens for normal, incomplete, complete, and reopened workflows.
+- Stakeholder UX review notes using the completed Phase 3 prototype.
+- Density, accessibility, and responsive review checklist.
 - Refined component inventory aligned with likely LWC implementation boundaries.
-- UX review checklist for throughput, clarity, and traceability.
+- Production-readiness question list for items outside the frontend mockup.
 
 ### Exit criteria
 - The experience supports fast scanning without hiding required decisions.
-- Reviewers can justify why each group is complete or blocked.
+- Reviewers can explain why each group is complete, incomplete, or waiting for applicant action.
 - The interface remains feasible to translate into Salesforce LWC components later.
+- Remaining work is clearly separated into prototype refinements versus production implementation planning.
 
-## Stage 5: Fully Interactive Functional Mockup
+## Stage 5: Retired as a Separate Mockup Phase
 
 ### Goal
-Deliver an interactive mockup with full front-end functionality for the defined mission phase, covering document verification, field consistency checks, group completion, and reopen behavior.
+Do not run a separate functional-mockup phase unless new stakeholder feedback introduces requirements outside the current Phase 3 prototype.
 
-### Key activities
-- Implement stateful front-end behavior for all document states:
-  - `Not uploaded`.
-  - `Uploaded`.
-  - `Doesn't exist`.
-  - `Reopened`.
-  - `Verified`.
-- Enforce allowed applicant and reviewer transitions in the mockup data model.
-- Require reviewer comments for every reopen action.
-- Simulate the candidate email notification trigger when a document is reopened.
-- Support document preview visibility rules, including no preview for `Doesn't exist` documents.
-- Support multiple uploaded files under a single required document type, with reviewer selection controlling the visible preview.
-- Allow field value edits independently from verified checkbox state.
-- Keep fields unverified until explicitly checked, even after edits.
-- Calculate group completion only when:
-  - All group documents are in `Verified` state.
-  - All group field checkboxes are checked.
-- Show real-time progress across groups and explicit blockers within the selected group.
-- Include enough sample data to exercise all five verification groups and major edge cases.
+### Rationale
+The original Stage 5 scope has already been absorbed into the completed Phase 3 implementation. The current prototype is runnable locally and includes stateful data, all required document states, allowed reviewer transitions, required reopen and missing-document acceptance comments, simulated notification feedback, preview and no-preview behavior, multiple uploaded-file selection, editable fields, independent field confirmation, derived group completion, overall progress, and selected-group blockers.
 
-### Deliverables
+### Retired deliverables now covered by Phase 3
 - Fully interactive UI mockup runnable locally.
-- Stateful sample application data covering 10-20 documents.
+- Stateful sample application data across all five verification groups and major edge cases.
 - Functional group progress and blocker calculations.
 - Functional reopen comment validation and simulated notification feedback.
 - Notes documenting remaining production or stakeholder questions outside the mockup.
 
-### Exit criteria
-- A reviewer can complete an end-to-end mock verification session in the prototype.
-- All document states, allowed reviewer transitions, field edits, field verification checks, and group completion rules behave as specified.
-- The mockup is suitable for stakeholder review before production design or LWC implementation planning.
+### Reopen criteria
+Only reopen Stage 5 if Stage 4 review identifies a new class of functional behavior that cannot be represented through the existing Phase 3 prototype and is still needed before production design or LWC implementation planning.
