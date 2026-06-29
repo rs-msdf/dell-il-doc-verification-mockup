@@ -13,4 +13,4 @@ Create an interactive verification workspace for the Dell IL Tech Leaders schola
 
 ### Alignment decisions
 - Primary user persona: verification reviewers.
-- Prototype strategy: start with medium-fidelity workflow mockup, then evolve to high-fidelity clickable interactions.
+- Prototype strategy: maintain a compact clickable workflow prototype with durable requirements consolidated in root documentation.

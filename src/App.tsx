@@ -17,6 +17,7 @@ type DocumentState = 'Verified' | 'Uploaded' | 'Not uploaded' | 'Reopened' | "Do
 type MissingDocumentReturnState = 'Not uploaded' | "Doesn't exist";
 type GroupStatus = 'Complete' | 'Incomplete';
 type FieldInputType = 'text' | 'number' | 'date' | 'select';
+type FieldVerificationMode = 'checkbox' | 'value-presence' | 'display-only';
 
 type UploadedFile = {
   id: string;
@@ -50,6 +51,8 @@ type ApplicationField = {
   checked: boolean;
   note: string;
   editedInSession: boolean;
+  verificationMode?: FieldVerificationMode;
+  readOnly?: boolean;
 };
 
 type VerificationGroup = {
@@ -366,6 +369,162 @@ const initialGroups: VerificationGroup[] = [
       },
     ],
   },
+  {
+    id: 'last-school-score',
+    name: 'last school score',
+    documents: [],
+    fields: [
+      {
+        id: 'last-school-name-district',
+        label: 'Last school name and district',
+        value: 'Herzliya Hebrew Gymnasium, Tel Aviv District',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'last-school-in-israel',
+        label: 'Last school was in Israel',
+        value: 'Yes',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'last-school-attendance-year',
+        label: 'Last year of attendance',
+        value: '2025',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'last-school-grade-studied',
+        label: 'Last grade studied',
+        value: '12',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'last-school-decile',
+        label: 'School decile',
+        value: '7',
+        inputType: 'text',
+        checked: true,
+        note: 'Official school score data is present.',
+        editedInSession: false,
+        verificationMode: 'value-presence',
+        readOnly: true,
+      },
+      {
+        id: 'last-school-decile-score',
+        label: 'School decile score',
+        value: '8.4',
+        inputType: 'text',
+        checked: true,
+        note: 'Official school score data is present.',
+        editedInSession: false,
+        verificationMode: 'value-presence',
+        readOnly: true,
+      },
+    ],
+  },
+  {
+    id: 'last-school-score-override',
+    name: 'Last school score override',
+    documents: [],
+    fields: [
+      {
+        id: 'override-last-school-name-district',
+        label: 'Last school name and district',
+        value: 'Makif Alef, Beersheba District',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'override-last-school-in-israel',
+        label: 'Last school was in Israel',
+        value: 'Yes',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'override-last-school-attendance-year',
+        label: 'Last year of attendance',
+        value: '2024',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'override-last-school-grade-studied',
+        label: 'Last grade studied',
+        value: '11',
+        inputType: 'text',
+        checked: true,
+        note: 'Submitted school context.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'override-last-school-decile',
+        label: 'School decile',
+        value: '',
+        inputType: 'text',
+        checked: true,
+        note: 'Official school score data is blank.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'override-last-school-decile-score',
+        label: 'School decile score',
+        value: '',
+        inputType: 'text',
+        checked: true,
+        note: 'Official school score data is blank.',
+        editedInSession: false,
+        verificationMode: 'display-only',
+        readOnly: true,
+      },
+      {
+        id: 'override-last-school-score',
+        label: 'Override last school score',
+        value: '',
+        inputType: 'text',
+        checked: false,
+        note: 'Required because official decile and score are blank.',
+        editedInSession: false,
+        verificationMode: 'value-presence',
+      },
+    ],
+  },
 ];
 
 const stateIcons: Record<DocumentState, LucideIcon> = {
@@ -391,6 +550,14 @@ function documentIsComplete(documentItem: RequiredDocumentItem) {
 }
 
 function fieldIsComplete(field: ApplicationField) {
+  if (field.verificationMode === 'display-only') {
+    return true;
+  }
+
+  if (field.verificationMode === 'value-presence') {
+    return field.value.trim().length > 0;
+  }
+
   return field.checked;
 }
 
@@ -427,6 +594,10 @@ function getGroupStatus(group: VerificationGroup): GroupStatus {
 }
 
 function getDefaultDocumentId(group: VerificationGroup) {
+  if (group.documents.length === 0) {
+    return '';
+  }
+
   return (
     attentionOrder
       .map((state) => group.documents.find((documentItem) => documentItem.state === state))
@@ -531,25 +702,28 @@ function App() {
   const selectedDocumentId = selectedDocumentIdByGroup[selectedGroup.id] ?? getDefaultDocumentId(selectedGroup);
   const selectedDocument =
     selectedGroup.documents.find((documentItem) => documentItem.id === selectedDocumentId) ?? selectedGroup.documents[0];
-  const selectedFileId = selectedFileIdByDocument[selectedDocument.id] ?? getLatestFileId(selectedDocument);
-  const selectedFile = selectedDocument.uploadedFiles.find((uploadedFile) => uploadedFile.id === selectedFileId);
+  const hasSelectedDocument = Boolean(selectedDocument);
+  const selectedFileId = selectedDocument ? selectedFileIdByDocument[selectedDocument.id] ?? getLatestFileId(selectedDocument) : '';
+  const selectedFile = selectedDocument?.uploadedFiles.find((uploadedFile) => uploadedFile.id === selectedFileId);
   const selectedGroupBlockers = getGroupBlockers(selectedGroup, activeReopenDraft, activeAbsenceAcceptanceDraft);
   const selectedGroupBlockerCount = getBlockerCount(selectedGroupBlockers);
   const completedGroupCount = groups.filter(groupIsComplete).length;
-  const selectedDocumentActions = getAvailableActions(selectedDocument);
-  const latestReviewerComment = selectedDocument.reviewerComments[0];
-  const sentCommentIsVisible = visibleSentCommentDocumentId === selectedDocument.id;
+  const selectedDocumentActions = selectedDocument
+    ? getAvailableActions(selectedDocument)
+    : { canVerify: false, canUnverify: false, canReopen: false, canViewSentComment: false };
+  const latestReviewerComment = selectedDocument?.reviewerComments[0];
+  const sentCommentIsVisible = selectedDocument ? visibleSentCommentDocumentId === selectedDocument.id : false;
   const activeDraftMatchesSelection =
-    activeReopenDraft?.groupId === selectedGroup.id && activeReopenDraft.documentId === selectedDocument.id;
-  const activeDraftIsInvalid = Boolean(activeDraftMatchesSelection && activeReopenDraft.comment.trim().length === 0);
+    selectedDocument ? activeReopenDraft?.groupId === selectedGroup.id && activeReopenDraft.documentId === selectedDocument.id : false;
+  const activeDraftIsInvalid = Boolean(activeDraftMatchesSelection && activeReopenDraft?.comment.trim().length === 0);
   const activeAcceptanceDraftMatchesSelection =
-    activeAbsenceAcceptanceDraft?.groupId === selectedGroup.id &&
-    activeAbsenceAcceptanceDraft.documentId === selectedDocument.id;
+    selectedDocument ? activeAbsenceAcceptanceDraft?.groupId === selectedGroup.id &&
+    activeAbsenceAcceptanceDraft.documentId === selectedDocument.id : false;
   const activeAcceptanceDraftIsInvalid = Boolean(
-    activeAcceptanceDraftMatchesSelection && activeAbsenceAcceptanceDraft.comment.trim().length === 0,
+    activeAcceptanceDraftMatchesSelection && activeAbsenceAcceptanceDraft?.comment.trim().length === 0,
   );
   const selectedDocumentNotifications = notifications.filter(
-    (notification) => notification.documentId === selectedDocument.id,
+    (notification) => selectedDocument ? notification.documentId === selectedDocument.id : false,
   );
 
   useEffect(() => {
@@ -587,6 +761,10 @@ function App() {
   }
 
   function updateSelectedDocument(updatedDocument: RequiredDocumentItem) {
+    if (!selectedDocument) {
+      return;
+    }
+
     setGroups((currentGroups) =>
       currentGroups.map((group) =>
         group.id === selectedGroup.id
@@ -602,7 +780,7 @@ function App() {
   }
 
   function handleVerifyDocument() {
-    if (!selectedDocumentActions.canVerify) {
+    if (!selectedDocument || !selectedDocumentActions.canVerify) {
       return;
     }
 
@@ -628,7 +806,7 @@ function App() {
   }
 
   function handleUnverifyDocument() {
-    if (!selectedDocumentActions.canUnverify) {
+    if (!selectedDocument || !selectedDocumentActions.canUnverify) {
       return;
     }
 
@@ -643,7 +821,7 @@ function App() {
   }
 
   function handleStartReopen() {
-    if (!selectedDocumentActions.canReopen) {
+    if (!selectedDocument || !selectedDocumentActions.canReopen) {
       return;
     }
 
@@ -694,6 +872,10 @@ function App() {
   }
 
   function handleToggleSentComment() {
+    if (!selectedDocument) {
+      return;
+    }
+
     setVisibleSentCommentDocumentId((currentDocumentId) =>
       currentDocumentId === selectedDocument.id ? null : selectedDocument.id,
     );
@@ -770,13 +952,22 @@ function App() {
   }
 
   const selectedGroupChips = useMemo(() => {
+    const documentChip = selectedGroup.documents.length === 0
+      ? 'No documents attached'
+      : selectedGroupBlockers.unverifiedDocuments.length > 0
+        ? `${selectedGroupBlockers.unverifiedDocuments.length} documents need verification`
+        : 'All documents verified';
+    const fieldChip = selectedGroupBlockers.uncheckedFields.length > 0
+      ? `${selectedGroupBlockers.uncheckedFields.length} fields need review`
+      : 'Field requirements complete';
+
     if (selectedGroupBlockerCount === 0) {
-      return ['All documents verified', 'All fields confirmed'];
+      return [documentChip, fieldChip];
     }
 
     return [
-      `${selectedGroupBlockers.unverifiedDocuments.length} documents need verification`,
-      `${selectedGroupBlockers.uncheckedFields.length} fields unchecked`,
+      documentChip,
+      fieldChip,
       ...(selectedGroupBlockers.pendingReopenComment ? ['Reopen comment required'] : []),
       ...(selectedGroupBlockers.pendingAbsenceAcceptanceComment ? ['Acceptance comment required'] : []),
       `${selectedGroupBlockerCount} blockers`,
@@ -822,8 +1013,10 @@ function App() {
             const missingSummary = [
               documentsMissing > 0
                 ? `${documentsMissing} ${documentsMissing === 1 ? 'document needs' : 'documents need'} review`
+                : group.documents.length === 0
+                  ? 'No documents attached'
                 : null,
-              fieldsMissing > 0 ? `${fieldsMissing} ${fieldsMissing === 1 ? 'field' : 'fields'} unchecked` : null,
+              fieldsMissing > 0 ? `${fieldsMissing} ${fieldsMissing === 1 ? 'field needs' : 'fields need'} review` : null,
             ].filter(Boolean).join(' · ');
 
             return (
@@ -857,7 +1050,7 @@ function App() {
               </div>
 
               <div className={`group-card-blockers ${missingSummary ? 'needs-attention' : ''}`}>
-                {missingSummary || 'All documents verified · all fields confirmed'}
+                {missingSummary || (group.documents.length === 0 ? 'No documents attached · score fields complete' : 'All documents verified · all fields confirmed')}
               </div>
 
               <div className="group-card-action">Open group</div>
@@ -893,7 +1086,7 @@ function App() {
               <div className="evidence-control-stack">
                 <div className="evidence-document-row">
                   <div className="document-tabs" role="tablist" aria-label={`Documents for ${selectedGroup.name}`}>
-                    {selectedGroup.documents.map((documentItem) => {
+                    {selectedGroup.documents.length > 0 ? selectedGroup.documents.map((documentItem) => {
                       const isSelected = documentItem.id === selectedDocument.id;
 
                       return (
@@ -911,11 +1104,11 @@ function App() {
                         </span>
                       </button>
                       );
-                    })}
+                    }) : <span className="no-documents-chip">No attached documents</span>}
                   </div>
                 </div>
 
-                <div className="evidence-verification-row" aria-label={`${selectedDocument.name} verification controls`}>
+                {hasSelectedDocument ? <div className="evidence-verification-row" aria-label={`${selectedDocument.name} verification controls`}>
                   <div className="document-action-stack">
                     <div className="selected-document-actions" aria-label={`${selectedDocument.name} decision controls`}>
                       {selectedDocumentActions.canVerify ? (
@@ -960,7 +1153,7 @@ function App() {
                           className={`static-textarea ${activeDraftIsInvalid && activeReopenDraft?.touched ? 'invalid' : ''}`}
                           id="reopen-comment"
                           ref={reopenCommentRef}
-                          value={activeReopenDraft.comment}
+                          value={activeReopenDraft?.comment ?? ''}
                           onBlur={() => setActiveReopenDraft((currentDraft) => currentDraft ? { ...currentDraft, touched: true } : currentDraft)}
                           onChange={(event) => handleReopenDraftChange(event.target.value)}
                           placeholder="Describe what the candidate needs to correct."
@@ -988,7 +1181,7 @@ function App() {
                           className={`static-textarea ${activeAcceptanceDraftIsInvalid && activeAbsenceAcceptanceDraft?.touched ? 'invalid' : ''}`}
                           id="absence-acceptance-comment"
                           ref={reopenCommentRef}
-                          value={activeAbsenceAcceptanceDraft.comment}
+                          value={activeAbsenceAcceptanceDraft?.comment ?? ''}
                           onBlur={() => setActiveAbsenceAcceptanceDraft((currentDraft) => currentDraft ? { ...currentDraft, touched: true } : currentDraft)}
                           onChange={(event) => handleAbsenceAcceptanceDraftChange(event.target.value)}
                           placeholder="Explain why the absence is acceptable for this application."
@@ -1018,11 +1211,11 @@ function App() {
                   <div className="document-state-summary">
                     <StateBadge state={selectedDocument.state} />
                   </div>
-                </div>
+                </div> : null}
 
                 <div className="evidence-file-row">
-                  <div className="file-tabs" role="tablist" aria-label={`Uploaded files for ${selectedDocument.name}`}>
-                    {selectedDocument.uploadedFiles.length > 0 ? selectedDocument.uploadedFiles.map((uploadedFile) => {
+                  <div className="file-tabs" role="tablist" aria-label={selectedDocument ? `Uploaded files for ${selectedDocument.name}` : `Uploaded files for ${selectedGroup.name}`}>
+                    {selectedDocument && selectedDocument.uploadedFiles.length > 0 ? selectedDocument.uploadedFiles.map((uploadedFile) => {
                       const displayDateTime = getDisplayDateTime(uploadedFile.uploadedAt);
                       const isSelected = uploadedFile.id === selectedFileId;
 
@@ -1083,7 +1276,9 @@ function App() {
                     <EyeOff aria-hidden="true" size={28} />
                     <h3>No preview available</h3>
                     <p>
-                      {selectedDocument.state === "Doesn't exist"
+                      {!selectedDocument
+                        ? 'This document group has no attached documents. Review the fields for completion.'
+                        : selectedDocument.state === "Doesn't exist"
                         ? 'Review the applicant comment as the evidence context for this document item.'
                         : 'No uploaded file exists for this document item yet.'}
                     </p>
@@ -1092,14 +1287,14 @@ function App() {
               </div>
 
               <article className="evidence-review-footer" aria-label="Selected document review actions">
-                {selectedDocument.applicantComment ? (
+                {selectedDocument?.applicantComment ? (
                   <div className="applicant-comment">
                     <span>Applicant comment</span>
                     <p>{selectedDocument.applicantComment}</p>
                   </div>
                 ) : null}
 
-                {selectedDocument.absenceAcceptanceComments?.length ? (
+                {selectedDocument?.absenceAcceptanceComments?.length ? (
                   <div className="reviewer-comment-history">
                     <span>Missing-document acceptance comment</span>
                     <p>{selectedDocument.absenceAcceptanceComments[0].comment}</p>
@@ -1123,31 +1318,45 @@ function App() {
                 <PencilLine aria-hidden="true" size={18} />
                 <div>
                   <h3 id="fields-heading">Field Verification</h3>
-                  <p>Compare each submitted value against the open document.</p>
+                  <p>{hasSelectedDocument ? 'Compare each submitted value against the open document.' : 'Review field requirements for this group.'}</p>
                 </div>
               </div>
 
               <div className="field-list">
                 {selectedGroup.fields.map((fieldItem) => (
-                  <article className={`field-row ${fieldItem.checked ? 'checked' : 'unchecked'}`} key={fieldItem.label}>
+                  <article className={`field-row ${fieldIsComplete(fieldItem) ? 'checked' : 'unchecked'}`} key={fieldItem.id}>
                     <div className="field-label-block">
                       <h4>{fieldItem.label}</h4>
                       <p>{fieldItem.note}</p>
                     </div>
-                    <input
-                      className={`static-input ${fieldItem.editedInSession ? 'edited' : ''}`}
-                      type={fieldItem.inputType === 'date' ? 'date' : fieldItem.inputType === 'number' ? 'number' : 'text'}
-                      value={fieldItem.value}
-                      onChange={(event) => handleFieldValueChange(fieldItem.id, event.target.value)}
-                    />
-                    <label className="checkbox-label">
+                    {fieldItem.readOnly ? (
+                      <div className={`static-field-value ${fieldItem.value ? '' : 'empty'}`}>
+                        {fieldItem.value || 'Blank'}
+                      </div>
+                    ) : (
                       <input
-                        type="checkbox"
-                        checked={fieldItem.checked}
-                        onChange={(event) => handleFieldCheckedChange(fieldItem.id, event.target.checked)}
+                        className={`static-input ${fieldItem.editedInSession ? 'edited' : ''}`}
+                        type={fieldItem.inputType === 'date' ? 'date' : fieldItem.inputType === 'number' ? 'number' : 'text'}
+                        value={fieldItem.value}
+                        onChange={(event) => handleFieldValueChange(fieldItem.id, event.target.value)}
                       />
-                      {fieldItem.checked ? 'Confirmed' : 'Confirm'}
-                    </label>
+                    )}
+                    {fieldItem.verificationMode === 'display-only' ? (
+                      <span className="field-state checked">Reference</span>
+                    ) : fieldItem.verificationMode === 'value-presence' ? (
+                      <span className={`field-state ${fieldIsComplete(fieldItem) ? 'checked' : 'unchecked'}`}>
+                        {fieldIsComplete(fieldItem) ? 'Value present' : 'Value required'}
+                      </span>
+                    ) : (
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={fieldItem.checked}
+                          onChange={(event) => handleFieldCheckedChange(fieldItem.id, event.target.checked)}
+                        />
+                        {fieldItem.checked ? 'Confirmed' : 'Confirm'}
+                      </label>
+                    )}
                     {fieldItem.editedInSession ? <span className="edited-marker">Edited in this session</span> : null}
                   </article>
                 ))}

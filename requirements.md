@@ -1,117 +1,259 @@
-## Requirements: Dell IL Tech Leaders Verification UI (Draft v1)
+# Requirements: Dell IL Tech Leaders Verification UI
 
-### 1. Scope and actor
-- Primary user is the verification reviewer.
-- This spec covers an interactive UI mockup for scholarship document verification.
-- Typical application volume is 10-20 documents.
-- The mockup is desktop-only; mobile and responsive mobile layouts are not required.
-- Production platform context: the system runs in Salesforce and the eventual UI will be built with Lightning Web Components (LWC).
-- Mockup implementation stack is flexible, but design and interaction choices should keep Salesforce Lightning/LWC capabilities and constraints in mind.
-- Technology decisions are tracked separately in `technology-decisions.md`.
+This document is the root requirements source for the frontend-only document verification mockup.
 
-### 2. Core verification responsibilities
-- Document-level verification:
-  - Confirm it is the correct required document.
-  - Confirm document readability.
-  - Confirm it pertains to the relevant person.
-- Application consistency verification:
-  - Confirm document evidence matches submitted application values.
+## 1. Scope
 
-### 3. Document state model
-- A required document item represents a document type, such as `back of ID`.
-- A single required document item can have multiple uploaded files over time.
-- Uploaded files may come from the applicant proactively replacing a file or from a requested correction after reopening.
-- Allowed document item states: Not uploaded, Uploaded, Doesn't exist, Reopened, Verified.
-- Initial state is Not uploaded.
-- Applicant transitions:
-  - Not uploaded -> Uploaded.
-  - Not uploaded -> Doesn't exist.
-  - Reopened -> Uploaded, after the applicant uploads a replacement file.
-- Reviewer transitions:
-  - Not uploaded -> Verified (comment required).
-  - Uploaded -> Verified.
-  - Verified -> Uploaded, Not uploaded, or Doesn't exist through Unverify, depending on uploaded files and the prior missing-document state.
-  - Uploaded -> Reopened (comment required).
-  - Verified -> Reopened (comment required).
-  - Doesn't exist -> Verified (comment required).
-  - Doesn't exist -> Reopened (comment required).
+- Primary user: verification reviewer.
+- Domain: Dell IL Tech Leaders scholarship document verification.
+- Typical application volume: 10-20 documents.
+- Prototype platform: Vite + React + TypeScript, with local mock data and no backend dependency.
+- Production context: eventual Salesforce Lightning Web Components implementation, but this repository remains a frontend mockup.
+- Desktop-first experience. Mobile-specific design is out of scope, but layouts should avoid obvious overflow at narrower widths.
 
-### 4. Reopen behavior
-- Reopen requires a mandatory reviewer comment.
-- Reopen triggers an email notification to the candidate requesting correction.
+## 2. Reviewer Goals
 
-### 5. Content visibility
-- Reviewer must see applicant comment content for each document.
-- When a document item has uploaded files, the reviewer must be able to scroll through and select from the list of uploaded files for that document type.
-- The selected uploaded file determines the document preview shown for that document item.
-- The uploaded file list should preserve visibility of multiple submissions, including applicant-initiated replacements and correction-request replacements.
-- For Doesn't exist documents, no document preview is displayed.
-- For Doesn't exist documents, reviewer decision is based on applicant comments and surrounding application/group context.
+The workspace must help reviewers make two coordinated checks in one flow:
 
-### 6. Grouped field verification
-- The UI must support grouped review where multiple documents support a field set.
-- Group review must present the relevant documents and fields together in one workflow.
-- Group review must make the expected supporting documents visible for each field set.
+- Document validity: the file is the correct required document, readable, and tied to the right person.
+- Application consistency: submitted application values match the relevant evidence or accepted application context.
 
-Group 1: Applicant ID
-- Documents: ID, back of ID, ID appendix.
-- Fields: first name, last name, ID number, date of birth, marital status, number of children under 18.
+The UI should reduce uncertainty by making every decision explicit, traceable, and easy to justify.
 
-Group 2: Parent 1 ID
-- Documents: ID, back of ID, ID appendix.
-- Fields: number of siblings under 24 years of age.
+## 3. Verification Groups
 
-Group 3: Parent 2 ID
-- Documents: ID, back of ID, ID appendix.
-- Fields: number of siblings under 24 years of age.
+Render these seven groups:
+
+| Group | Required documents | Fields |
+| --- | --- | --- |
+| Applicant ID | ID, Back of ID, ID appendix | First name, Last name, ID number, Date of birth, Marital status, Number of children under 18 |
+| Parent 1 ID | ID, Back of ID, ID appendix | Number of siblings under 24 years of age |
+| Parent 2 ID | ID, Back of ID, ID appendix | Number of siblings under 24 years of age |
+| Applicant Income | Income statement, Benefits statement | Applicant income |
+| Applicant Disability Status | Disability certificate | Applicant disability percentage |
+| last school score | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score |
+| Last school score override | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score, Override last school score |
 
 Parent 1 ID and Parent 2 ID intentionally use the same field wording.
 
-Group 4: Applicant Income
-- Documents: income statement, benefits statement.
-- Fields: applicant income.
+## 4. Summary Page
 
-Group 5: Applicant Disability Status
-- Documents: disability certificate.
-- Fields: applicant disability percentage.
+The summary page must:
 
-### 7. Per-field verification interaction
-- For each field, show current application value.
-- Reviewer can edit field value when evidence is inconsistent.
-- Each field includes a verified checkbox.
-- Editing and marking verified are separate actions.
-- A field remains unverified until explicitly checked.
+- Show applicant identity, application reference, program name, and overall group progress.
+- Show all seven verification groups as selectable cards.
+- Show each group's complete or incomplete status.
+- Show document completion count and field completion count per group.
+- Show actionable missing-work text, such as `2 documents need review`, `1 field needs review`, or `No documents attached`.
+- Open a focused drilldown workspace when a group card is selected.
+- Keep the summary page and drilldown page separate; they should not render at the same time.
 
-### 8. Group completion logic
-- A group is complete only when both are true:
-  - All group documents are in Verified state.
-  - All group field checkboxes are checked.
+## 5. Group Drilldown
 
-### 9. Progress and missing-items visibility
-- Group list must clearly show complete versus incomplete groups at a glance.
-- Top-level progress should be shown by group completion count, such as 3 of 5 groups complete.
-- When a group is selected, missing items for completion must be explicit:
-  - Documents not yet Verified.
-  - Fields not yet checked as verified.
-- Missing items should be visible by category, using compact counts, inline indicators, or detailed lists as appropriate for the phase. Categories include unverified documents, unchecked fields, and required reopen comments when relevant.
+The drilldown page must:
 
-### 9.1 Layout assumption for mockup planning
-- The mockup is desktop-focused.
-- Mobile layout support is not required.
-- Document preview and field review should be planned as side-by-side workspace regions.
+- Provide a clear back button to return to the group summary without losing current state.
+- Show selected group name, complete/incomplete status, and missing-work chips.
+- Show required document tabs for document-backed groups.
+- Show an empty document state for field-only groups with no attached documents.
+- Show selected document state, applicant comment, uploaded-file history, preview/no-preview state, and valid actions when a document exists.
+- Show all fields in the selected group.
+- Keep document evidence and field review visually separate, usually side by side on desktop.
 
-### 10. UX and validation constraints
-- Document states and available actions must be unambiguous.
-- Group workflow must coexist with per-document state handling.
-- Per-document state handling must coexist with multiple uploaded files for a single document type.
-- Incomplete groups must surface actionable blockers.
-- Reviewers should be able to complete work progressively across fields and documents.
+## 6. Document Model
 
-### 11. Out of scope for this phase
-- Backend architecture and data model implementation details.
-- OCR or ML extraction implementation.
-- Production notification infrastructure implementation.
+A required document item represents one document type, such as `Back of ID`. One required document item can have multiple uploaded files over time.
 
-### 12. Phase 2 clarification
-- Phase 2 uses timestamp-only uploaded-file tabs in the main comparison row to keep the preview area compact.
-- Supporting sample data can still preserve upload labels such as `Initial upload`, `Applicant replacement`, and `requested correction` for traceability and later interactive phases.
+Allowed document states:
+
+- `Not uploaded`
+- `Uploaded`
+- `Doesn't exist`
+- `Reopened`
+- `Verified`
+
+Document state applies to the required document item, not to individual uploaded files.
+
+Uploaded files may represent initial uploads, applicant replacements, or requested correction replacements. Uploaded-file tabs should remain compact and timestamp-first. Preview details can show filename, upload label, and timestamp.
+
+## 7. Document Actions
+
+Reviewer actions must be derived from the selected document state:
+
+| Current state | Available reviewer actions | Result | Comment required |
+| --- | --- | --- | --- |
+| `Not uploaded` | Verify | `Verified` | Yes, acceptance comment |
+| `Uploaded` | Verify | `Verified` | No |
+| `Uploaded` | Reopen | `Reopened` | Yes, correction comment |
+| `Doesn't exist` | Verify | `Verified` | Yes, acceptance comment |
+| `Doesn't exist` | Reopen | `Reopened` | Yes, correction comment |
+| `Reopened` | Verify | `Verified` | No |
+| `Verified` | Unverify | `Uploaded`, `Not uploaded`, or `Doesn't exist` | No |
+| `Verified` | Reopen | `Reopened` | Yes, correction comment |
+
+Unsupported actions should not appear as available actions.
+
+Unverify must return a verified document to the correct reviewable state:
+
+- Documents with uploaded files return to `Uploaded`.
+- Missing documents accepted from `Not uploaded` return to `Not uploaded`.
+- Missing documents previously marked `Doesn't exist` by the applicant return to `Doesn't exist`.
+
+## 8. Comments and Notifications
+
+- Reopen requires a non-empty reviewer correction comment before the state changes.
+- Missing-document verification from `Not uploaded` or `Doesn't exist` requires a non-empty acceptance comment.
+- Reopen comment entry appears directly near the decision controls.
+- Reopen creates a simulated candidate notification in the prototype.
+- Reopened documents expose the latest sent correction comment.
+- Reviewer comments and applicant comments must remain visible in the relevant document context.
+
+## 9. Preview and Files
+
+- The selected uploaded file controls the document preview.
+- Documents with no uploaded files show a no-preview state.
+- `Doesn't exist` documents show no preview; reviewer uses applicant comments and group context.
+- Field-only groups with no attached documents show an empty evidence state and no document actions.
+- The preview area should include a disabled or no-op full-screen affordance until real file viewing exists.
+
+## 10. Field Review
+
+Standard evidence-backed fields must:
+
+- Show the current application value.
+- Allow reviewer edits.
+- Mark edited values as edited in the current session.
+- Keep editing separate from confirmation.
+- Use an explicit confirmation checkbox where checked fields read `Confirmed` and unchecked fields read `Confirm`.
+
+Field-only last-school score groups are exceptions:
+
+- Read-only context fields do not require confirmation checkboxes.
+- `last school score` completes when official `School decile` and `School decile score` values are present.
+- `Last school score override` shows blank official decile fields and completes when `Override last school score` is filled.
+
+## 11. Completion Logic
+
+Document completion:
+
+```text
+documentComplete = document.state == "Verified"
+```
+
+Field completion:
+
+```text
+if field.verificationMode == "display-only": fieldComplete = true
+if field.verificationMode == "value-presence": fieldComplete = trim(field.value) is not empty
+otherwise: fieldComplete = field.checked == true
+```
+
+Group completion:
+
+```text
+groupComplete = every(group.documents, documentComplete)
+             and every(group.fields, fieldComplete)
+```
+
+Field-only groups have no documents, so document completion is vacuously complete and field requirements control completion.
+
+Top-level progress is the count of complete groups out of total groups, for example `3 of 7 groups complete`. It must be derived from current state, not hardcoded.
+
+## 12. Blockers
+
+Incomplete groups must surface actionable blockers by category:
+
+- Documents not yet verified.
+- Fields whose configured completion requirement is not met.
+- Required reopen comment while an invalid reopen draft is active.
+- Required missing-document acceptance comment while an invalid acceptance draft is active.
+
+When a group reaches completion, attention chips should be replaced with calm complete-state chips such as `All documents verified`, `No documents attached`, and `Field requirements complete`.
+
+## 13. Prototype Sample Coverage
+
+The local fixture data should cover:
+
+- Complete and incomplete groups.
+- All allowed document states.
+- Multiple uploaded files for at least two document items.
+- Applicant comments and reviewer comments.
+- Reopened document with a previous correction comment.
+- `Doesn't exist` document with no preview.
+- `Not uploaded` document requiring acceptance comment.
+- Editable fields, checked fields, unchecked fields, and edited-in-session marker.
+- Field-only groups with no attached documents.
+- Official last-school score and override last-school score cases.
+
+Current fixture identity:
+
+| Field | Value |
+| --- | --- |
+| Applicant name | Dana Levi |
+| Application reference | APP-2026-0148 |
+| Program | Dell IL Tech Leaders |
+
+Initial progress should derive to `3 of 7 groups complete`.
+
+## 14. Validation Checklist
+
+Navigation:
+
+- All seven group cards are clickable.
+- Group cards show document and field progress plus missing-work details.
+- Back navigation returns to the summary page without losing state.
+- Document tabs and uploaded-file tabs update selected content.
+- Field-only groups open without crashing and show empty document/file states.
+
+Actions:
+
+- `Uploaded` documents expose Verify and Reopen.
+- `Verified` documents expose Reopen and Unverify, but not Verify.
+- `Doesn't exist` documents expose Verify and Reopen with no preview, and Verify requires an acceptance comment.
+- `Not uploaded` documents expose Verify with no preview, and Verify requires an acceptance comment.
+- `Reopened` documents expose Verify and a control to view the latest sent correction comment.
+- Reopen cannot submit without a comment.
+- Reopen stores the comment and shows simulated notification feedback.
+
+Completion:
+
+- Editing a standard field does not automatically complete it.
+- Checking or unchecking a standard field updates blockers and group completion.
+- Reopening or unverifying a verified document makes its group incomplete.
+- Verifying required documents can make a group complete when field requirements are complete.
+- Filling `Override last school score` makes `Last school score override` complete.
+- Overall progress is derived from current completed groups.
+
+## 15. Accessibility and UX Quality
+
+- Group cards must be keyboard-operable buttons or equivalent controls.
+- Focus order should follow the visual workflow: header, group cards, back button, document tabs, file tabs, preview, actions, fields.
+- Active document and file tabs need clear focus and selected states.
+- Reopen and acceptance textareas should receive focus when revealed.
+- Buttons must have meaningful accessible names.
+- Status must not rely on color alone.
+- Required comment validation must be visible near the field.
+- Long labels, comments, and file names must wrap without breaking controls.
+- The summary should remain scannable for applications with 10-20 total documents.
+- The visual language should remain compatible with Salesforce Lightning expectations.
+
+## 16. Out of Scope
+
+- Backend persistence and final Salesforce object model.
+- OCR, ML extraction, or automated document parsing.
+- Real candidate email delivery or notification infrastructure.
+- Authentication, reviewer assignment, permissions, audit storage, or concurrency handling.
+- Real file storage, secure file preview, or production full-screen viewer.
+- Production LWC implementation details.
+
+## 17. Open Production Questions
+
+- Where are document states, field edits, comments, reviewer identity, and timestamps stored?
+- Are field edits saved immediately, staged per group, or submitted as a full review transaction?
+- What audit trail is required for Verify, Reopen, Unverify, and acceptance decisions?
+- Should Unverify require a reason?
+- Are candidate correction notifications immediate or batched?
+- Which file types must be previewed inline, and what fallback appears for unsupported files?
+- How should the UI handle concurrent reviewers on the same application?
+- Which SLDS patterns and reusable component boundaries are required in a future LWC implementation?
+- What wording is acceptable for correction requests and missing-document acceptance?

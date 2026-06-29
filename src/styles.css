@@ -219,7 +219,7 @@ h1 {
 }
 
 .group-card-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
 }
 
@@ -825,7 +825,8 @@ h1 {
 }
 
 .waiting-copy,
-.no-files-chip {
+.no-files-chip,
+.no-documents-chip {
   display: inline-flex;
   align-items: center;
   min-height: 32px;
@@ -1094,6 +1095,23 @@ h1 {
   border: 1px solid var(--line-strong);
   border-radius: 6px;
   font-weight: 650;
+}
+
+.static-field-value {
+  min-height: 34px;
+  width: 100%;
+  padding: 8px 10px;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-weight: 650;
+}
+
+.static-field-value.empty {
+  color: var(--muted);
+  font-style: italic;
 }
 
 .static-input.edited {
