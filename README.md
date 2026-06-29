@@ -4,7 +4,7 @@ This repository contains the clickable workflow prototype for the Dell IL Tech L
 
 The UI is implemented as a frontend-only Vite + React + TypeScript app at the repository root. The durable product requirements are consolidated in `requirements.md`, the product intent lives in `mission.md`, and implementation stack decisions live in `technology-decisions.md`.
 
-The current prototype is split into two pages: a summary page with seven verification groups, and a selected-group drilldown page with a clear back button to return to the summary. The drilldown supports document and uploaded-file tab selection, field-only groups with no attached documents, allowed document decisions, required inline reopen comments with simulated candidate notification feedback, required acceptance comments for missing-document verification from `Not uploaded` or `Doesn't exist`, sent-comment viewing for reopened documents, editable application fields, independent field confirmation checkboxes, last-school score value requirements, and derived group/application progress.
+The current prototype is split into two pages: a summary page with six verification tasks, and a selected-task drilldown page with a clear back button to return to the summary. The drilldown supports document and uploaded-file tab selection, a field-only override task with no attached documents, allowed document decisions, required inline reopen comments with simulated candidate notification feedback, required acceptance comments for missing-document verification from `Not uploaded` or `Doesn't exist`, sent-comment viewing for reopened documents, editable application fields, independent field confirmation checkboxes, last-school score override requirements, and derived task/application progress.
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ Start the local development server:
 npm run dev
 ```
 
-Vite will print a local URL in the terminal, usually `http://localhost:5173/`. Open that URL in a browser to view the Phase 3 clickable prototype.
+Vite will print a local URL in the terminal, usually `http://localhost:5173/`. Open that URL in a browser to view the clickable prototype.
 
 ## Build the UI
 

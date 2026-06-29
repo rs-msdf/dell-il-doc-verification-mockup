@@ -20,18 +20,17 @@ The workspace must help reviewers make two coordinated checks in one flow:
 
 The UI should reduce uncertainty by making every decision explicit, traceable, and easy to justify.
 
-## 3. Verification Groups
+## 3. Verification Tasks
 
-Render these seven groups:
+Render these six verification tasks:
 
-| Group | Required documents | Fields |
+| Task | Required documents | Fields |
 | --- | --- | --- |
 | Applicant ID | ID, Back of ID, ID appendix | First name, Last name, ID number, Date of birth, Marital status, Number of children under 18 |
 | Parent 1 ID | ID, Back of ID, ID appendix | Number of siblings under 24 years of age |
 | Parent 2 ID | ID, Back of ID, ID appendix | Number of siblings under 24 years of age |
 | Applicant Income | Income statement, Benefits statement | Applicant income |
 | Applicant Disability Status | Disability certificate | Applicant disability percentage |
-| last school score | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score |
 | Last school score override | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score, Override last school score |
 
 Parent 1 ID and Parent 2 ID intentionally use the same field wording.
@@ -40,24 +39,24 @@ Parent 1 ID and Parent 2 ID intentionally use the same field wording.
 
 The summary page must:
 
-- Show applicant identity, application reference, program name, and overall group progress.
-- Show all seven verification groups as selectable cards.
-- Show each group's complete or incomplete status.
-- Show document completion count and field completion count per group.
+- Show applicant identity, application reference, program name, and overall task progress.
+- Show all six verification tasks as selectable cards.
+- Show each task's complete or incomplete status.
+- Show document completion count and field completion count per task.
 - Show actionable missing-work text, such as `2 documents need review`, `1 field needs review`, or `No documents attached`.
-- Open a focused drilldown workspace when a group card is selected.
+- Open a focused drilldown workspace when a task card is selected.
 - Keep the summary page and drilldown page separate; they should not render at the same time.
 
-## 5. Group Drilldown
+## 5. Task Drilldown
 
 The drilldown page must:
 
-- Provide a clear back button to return to the group summary without losing current state.
-- Show selected group name, complete/incomplete status, and missing-work chips.
-- Show required document tabs for document-backed groups.
-- Show an empty document state for field-only groups with no attached documents.
+- Provide a clear back button to return to the task summary without losing current state.
+- Show selected task name, complete/incomplete status, and missing-work chips.
+- Show required document tabs for document-backed tasks.
+- Show an empty document state for field-only tasks with no attached documents.
 - Show selected document state, applicant comment, uploaded-file history, preview/no-preview state, and valid actions when a document exists.
-- Show all fields in the selected group.
+- Show all fields in the selected task.
 - Keep document evidence and field review visually separate, usually side by side on desktop.
 
 ## 6. Document Model
@@ -113,7 +112,7 @@ Unverify must return a verified document to the correct reviewable state:
 - The selected uploaded file controls the document preview.
 - Documents with no uploaded files show a no-preview state.
 - `Doesn't exist` documents show no preview; reviewer uses applicant comments and group context.
-- Field-only groups with no attached documents show an empty evidence state and no document actions.
+- Field-only tasks with no attached documents show an empty evidence state and no document actions.
 - The preview area should include a disabled or no-op full-screen affordance until real file viewing exists.
 
 ## 10. Field Review
@@ -126,10 +125,9 @@ Standard evidence-backed fields must:
 - Keep editing separate from confirmation.
 - Use an explicit confirmation checkbox where checked fields read `Confirmed` and unchecked fields read `Confirm`.
 
-Field-only last-school score groups are exceptions:
+The field-only last-school score override task is the exception:
 
 - Read-only context fields do not require confirmation checkboxes.
-- `last school score` completes when official `School decile` and `School decile score` values are present.
 - `Last school score override` shows blank official decile fields and completes when `Override last school score` is filled.
 
 ## 11. Completion Logic
@@ -148,33 +146,33 @@ if field.verificationMode == "value-presence": fieldComplete = trim(field.value)
 otherwise: fieldComplete = field.checked == true
 ```
 
-Group completion:
+Task completion:
 
 ```text
-groupComplete = every(group.documents, documentComplete)
-             and every(group.fields, fieldComplete)
+taskComplete = every(task.documents, documentComplete)
+            and every(task.fields, fieldComplete)
 ```
 
-Field-only groups have no documents, so document completion is vacuously complete and field requirements control completion.
+Field-only tasks have no documents, so document completion is vacuously complete and field requirements control completion.
 
-Top-level progress is the count of complete groups out of total groups, for example `3 of 7 groups complete`. It must be derived from current state, not hardcoded.
+Top-level progress is the count of complete tasks out of total tasks, for example `2 of 6 tasks complete`. It must be derived from current state, not hardcoded.
 
 ## 12. Blockers
 
-Incomplete groups must surface actionable blockers by category:
+Incomplete tasks must surface actionable blockers by category:
 
 - Documents not yet verified.
 - Fields whose configured completion requirement is not met.
 - Required reopen comment while an invalid reopen draft is active.
 - Required missing-document acceptance comment while an invalid acceptance draft is active.
 
-When a group reaches completion, attention chips should be replaced with calm complete-state chips such as `All documents verified`, `No documents attached`, and `Field requirements complete`.
+When a task reaches completion, attention chips should be replaced with calm complete-state chips such as `All documents verified`, `No documents attached`, and `Field requirements complete`.
 
 ## 13. Prototype Sample Coverage
 
 The local fixture data should cover:
 
-- Complete and incomplete groups.
+- Complete and incomplete tasks.
 - All allowed document states.
 - Multiple uploaded files for at least two document items.
 - Applicant comments and reviewer comments.
@@ -182,8 +180,8 @@ The local fixture data should cover:
 - `Doesn't exist` document with no preview.
 - `Not uploaded` document requiring acceptance comment.
 - Editable fields, checked fields, unchecked fields, and edited-in-session marker.
-- Field-only groups with no attached documents.
-- Official last-school score and override last-school score cases.
+- Field-only tasks with no attached documents.
+- Field-only last-school score override case.
 
 Current fixture identity:
 
@@ -193,17 +191,17 @@ Current fixture identity:
 | Application reference | APP-2026-0148 |
 | Program | Dell IL Tech Leaders |
 
-Initial progress should derive to `3 of 7 groups complete`.
+Initial progress should derive to `2 of 6 tasks complete`.
 
 ## 14. Validation Checklist
 
 Navigation:
 
-- All seven group cards are clickable.
-- Group cards show document and field progress plus missing-work details.
+- All six task cards are clickable.
+- Task cards show document and field progress plus missing-work details.
 - Back navigation returns to the summary page without losing state.
 - Document tabs and uploaded-file tabs update selected content.
-- Field-only groups open without crashing and show empty document/file states.
+- Field-only tasks open without crashing and show empty document/file states.
 
 Actions:
 
@@ -218,16 +216,16 @@ Actions:
 Completion:
 
 - Editing a standard field does not automatically complete it.
-- Checking or unchecking a standard field updates blockers and group completion.
-- Reopening or unverifying a verified document makes its group incomplete.
-- Verifying required documents can make a group complete when field requirements are complete.
+- Checking or unchecking a standard field updates blockers and task completion.
+- Reopening or unverifying a verified document makes its task incomplete.
+- Verifying required documents can make a task complete when field requirements are complete.
 - Filling `Override last school score` makes `Last school score override` complete.
-- Overall progress is derived from current completed groups.
+- Overall progress is derived from current completed tasks.
 
 ## 15. Accessibility and UX Quality
 
-- Group cards must be keyboard-operable buttons or equivalent controls.
-- Focus order should follow the visual workflow: header, group cards, back button, document tabs, file tabs, preview, actions, fields.
+- Task cards must be keyboard-operable buttons or equivalent controls.
+- Focus order should follow the visual workflow: header, task cards, back button, document tabs, file tabs, preview, actions, fields.
 - Active document and file tabs need clear focus and selected states.
 - Reopen and acceptance textareas should receive focus when revealed.
 - Buttons must have meaningful accessible names.

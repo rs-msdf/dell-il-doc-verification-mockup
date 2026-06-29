@@ -14,7 +14,7 @@ The mockup will be implemented as a frontend-only Vite + React + TypeScript appl
 ### Rationale
 - Vite keeps setup, local development, and static builds lightweight.
 - React supports fast prototyping of stateful reviewer workflows, grouped navigation, conditional actions, and validation states.
-- TypeScript makes document states, allowed transitions, field verification, and group completion logic explicit.
+- TypeScript makes document states, allowed transitions, field verification, and task completion logic explicit.
 - Local fixtures avoid backend setup while still allowing realistic applicant and document scenarios.
 - Lightning-compatible CSS patterns keep the mockup close to the eventual Salesforce LWC implementation without committing the prototype to production architecture.
 

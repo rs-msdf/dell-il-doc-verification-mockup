@@ -370,79 +370,6 @@ const initialGroups: VerificationGroup[] = [
     ],
   },
   {
-    id: 'last-school-score',
-    name: 'last school score',
-    documents: [],
-    fields: [
-      {
-        id: 'last-school-name-district',
-        label: 'Last school name and district',
-        value: 'Herzliya Hebrew Gymnasium, Tel Aviv District',
-        inputType: 'text',
-        checked: true,
-        note: 'Submitted school context.',
-        editedInSession: false,
-        verificationMode: 'display-only',
-        readOnly: true,
-      },
-      {
-        id: 'last-school-in-israel',
-        label: 'Last school was in Israel',
-        value: 'Yes',
-        inputType: 'text',
-        checked: true,
-        note: 'Submitted school context.',
-        editedInSession: false,
-        verificationMode: 'display-only',
-        readOnly: true,
-      },
-      {
-        id: 'last-school-attendance-year',
-        label: 'Last year of attendance',
-        value: '2025',
-        inputType: 'text',
-        checked: true,
-        note: 'Submitted school context.',
-        editedInSession: false,
-        verificationMode: 'display-only',
-        readOnly: true,
-      },
-      {
-        id: 'last-school-grade-studied',
-        label: 'Last grade studied',
-        value: '12',
-        inputType: 'text',
-        checked: true,
-        note: 'Submitted school context.',
-        editedInSession: false,
-        verificationMode: 'display-only',
-        readOnly: true,
-      },
-      {
-        id: 'last-school-decile',
-        label: 'School decile',
-        value: '7',
-        inputType: 'text',
-        checked: true,
-        note: 'Official school score data is present.',
-        editedInSession: false,
-        verificationMode: 'value-presence',
-        readOnly: true,
-      },
-      {
-        id: 'last-school-decile-score',
-        label: 'School decile score',
-        value: '8.4',
-        inputType: 'text',
-        checked: true,
-        note: 'Official school score data is present.',
-        editedInSession: false,
-        verificationMode: 'value-presence',
-        readOnly: true,
-      },
-    ],
-  },
-  {
     id: 'last-school-score-override',
     name: 'Last school score override',
     documents: [],
@@ -989,7 +916,7 @@ function App() {
         </div>
         <div className="header-status" aria-label="Application verification status">
           <span className="progress-pill">
-            {completedGroupCount} of {groups.length} groups complete
+            {completedGroupCount} of {groups.length} tasks complete
           </span>
         </div>
       </section>
@@ -998,12 +925,12 @@ function App() {
         <div className="group-overview-header">
           <div>
             <p className="eyebrow">Start here</p>
-            <h2 id="group-overview-title">Document groups</h2>
-            <p className="summary-copy">Choose one group to open its dedicated review workspace.</p>
+            <h2 id="group-overview-title">Verification Tasks</h2>
+            <p className="summary-copy">Choose one task to open its dedicated review workspace.</p>
           </div>
         </div>
 
-        <div className="group-card-grid" aria-label="Verification groups">
+        <div className="group-card-grid" aria-label="Verification tasks">
           {groups.map((group) => {
             const documentsComplete = group.documents.filter(documentIsComplete).length;
             const fieldsComplete = group.fields.filter(fieldIsComplete).length;
@@ -1053,7 +980,7 @@ function App() {
                 {missingSummary || (group.documents.length === 0 ? 'No documents attached · score fields complete' : 'All documents verified · all fields confirmed')}
               </div>
 
-              <div className="group-card-action">Open group</div>
+              <div className="group-card-action">Open task</div>
             </button>
             );
           })}
@@ -1061,17 +988,17 @@ function App() {
       </section> : null}
 
       {currentPage === 'drilldown' ? <section className="entered-workspace" aria-label={`${selectedGroup.name} workspace`}>
-        <div className="workspace-breadcrumb" aria-label="Group workspace navigation">
+        <div className="workspace-breadcrumb" aria-label="Task workspace navigation">
           <div className="workspace-breadcrumb-path">
             <button className="back-link" type="button" onClick={handleBackToSummary}>
               <ArrowLeft aria-hidden="true" size={16} />
-              Back to all document groups
+              Back to all verification tasks
             </button>
             <span aria-hidden="true">/</span>
             <strong>{selectedGroup.name}</strong>
             <StatusPill status={getGroupStatus(selectedGroup)} />
           </div>
-          <div className="summary-chips" aria-label="Selected group status">
+          <div className="summary-chips" aria-label="Selected task status">
             {selectedGroupChips.map((chip) => (
               <span className={`summary-chip ${selectedGroupBlockerCount > 0 ? 'attention' : 'complete'}`} key={chip}>
                 {chip}
@@ -1277,7 +1204,7 @@ function App() {
                     <h3>No preview available</h3>
                     <p>
                       {!selectedDocument
-                        ? 'This document group has no attached documents. Review the fields for completion.'
+                        ? 'This verification task has no attached documents. Review the fields for completion.'
                         : selectedDocument.state === "Doesn't exist"
                         ? 'Review the applicant comment as the evidence context for this document item.'
                         : 'No uploaded file exists for this document item yet.'}
@@ -1318,7 +1245,7 @@ function App() {
                 <PencilLine aria-hidden="true" size={18} />
                 <div>
                   <h3 id="fields-heading">Field Verification</h3>
-                  <p>{hasSelectedDocument ? 'Compare each submitted value against the open document.' : 'Review field requirements for this group.'}</p>
+                  <p>{hasSelectedDocument ? 'Compare each submitted value against the open document.' : 'Review field requirements for this task.'}</p>
                 </div>
               </div>
 
@@ -1341,12 +1268,8 @@ function App() {
                         onChange={(event) => handleFieldValueChange(fieldItem.id, event.target.value)}
                       />
                     )}
-                    {fieldItem.verificationMode === 'display-only' ? (
-                      <span className="field-state checked">Reference</span>
-                    ) : fieldItem.verificationMode === 'value-presence' ? (
-                      <span className={`field-state ${fieldIsComplete(fieldItem) ? 'checked' : 'unchecked'}`}>
-                        {fieldIsComplete(fieldItem) ? 'Value present' : 'Value required'}
-                      </span>
+                    {fieldItem.verificationMode === 'display-only' ? null : fieldItem.verificationMode === 'value-presence' ? (
+                      fieldIsComplete(fieldItem) ? <span className="field-state checked">Value present</span> : null
                     ) : (
                       <label className="checkbox-label">
                         <input
