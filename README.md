@@ -6,6 +6,8 @@ The UI is implemented as a frontend-only Vite + React + TypeScript app at the re
 
 The current prototype is split into two pages: a summary page with 14 verification tasks, and a selected-task drilldown page with a clear back button to return to the summary. The drilldown supports document and uploaded-file tab selection, field-only and address-based score override tasks, income, disability, estrangement, and death-certificate task variants, allowed document decisions, required inline reopen comments with simulated candidate notification feedback, required acceptance comments for missing-document verification from `Not uploaded` or `Doesn't exist`, sent-comment viewing for reopened documents, editable application fields, independent field confirmation checkboxes, last-school score override requirements, and derived task/application progress.
 
+The `claude-lwc-instructions/` folder contains a Salesforce LWC handoff package for Claude Code, including requirements-focused implementation instructions and screenshots of the current UI interaction states.
+
 ## Prerequisites
 
 - Node.js
