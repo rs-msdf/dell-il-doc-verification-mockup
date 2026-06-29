@@ -14,7 +14,7 @@ These questions are intentionally outside the frontend-only mockup unless they a
 
 - What audit trail is required for `Verified`, `Reopened`, `Uploaded`, and `Doesn't exist` decisions?
 - Are reviewer comments immutable after submission?
-- Should reverting `Verified` to `Uploaded` require a reason?
+- Should Unverify require a reason when reverting `Verified` to `Uploaded`, `Not uploaded`, or `Doesn't exist`?
 - How long should document previews, comments, and decision history remain available?
 - Which actions require supervisor review or elevated permissions?
 

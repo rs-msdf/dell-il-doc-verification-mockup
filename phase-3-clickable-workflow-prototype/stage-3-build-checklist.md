@@ -33,8 +33,9 @@
 ## 4. Document actions
 
 - [x] Implement Verify for `Uploaded` documents.
+- [x] Implement Verify for `Not uploaded` documents with required acceptance comment.
 - [x] Implement Verify for `Doesn't exist` documents with required acceptance comment.
-- [x] Implement Mark as uploaded from `Verified` documents.
+- [x] Implement Unverify from `Verified` documents.
 - [x] Implement Reopen from `Uploaded` documents.
 - [x] Implement Reopen from `Verified` documents.
 - [x] Implement Reopen from `Doesn't exist` documents.

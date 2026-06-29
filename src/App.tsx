@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 
 type DocumentState = 'Verified' | 'Uploaded' | 'Not uploaded' | 'Reopened' | "Doesn't exist";
+type MissingDocumentReturnState = 'Not uploaded' | "Doesn't exist";
 type GroupStatus = 'Complete' | 'Incomplete';
 type FieldInputType = 'text' | 'number' | 'date' | 'select';
 
@@ -37,6 +38,7 @@ type RequiredDocumentItem = {
   applicantComment: string;
   uploadedFiles: UploadedFile[];
   reviewerComments: ReviewerComment[];
+  missingDocumentReturnState?: MissingDocumentReturnState;
   absenceAcceptanceComments?: ReviewerComment[];
 };
 
@@ -209,6 +211,7 @@ const initialGroups: VerificationGroup[] = [
         applicantComment: 'Parent 1 does not have an appendix.',
         uploadedFiles: [],
         reviewerComments: [],
+        missingDocumentReturnState: "Doesn't exist",
       },
     ],
     fields: [
@@ -270,6 +273,7 @@ const initialGroups: VerificationGroup[] = [
         applicantComment: 'Parent 2 has no appendix document.',
         uploadedFiles: [],
         reviewerComments: [],
+        missingDocumentReturnState: "Doesn't exist",
       },
     ],
     fields: [
@@ -453,11 +457,19 @@ function getDisplayDateTime(uploadedAt: string) {
 
 function getAvailableActions(documentItem: RequiredDocumentItem) {
   return {
-    canVerify: documentItem.state === 'Uploaded' || documentItem.state === 'Reopened' || documentItem.state === "Doesn't exist",
-    canMarkUploaded: documentItem.state === 'Verified',
+    canVerify:
+      documentItem.state === 'Uploaded' ||
+      documentItem.state === 'Reopened' ||
+      documentItem.state === "Doesn't exist" ||
+      documentItem.state === 'Not uploaded',
+    canUnverify: documentItem.state === 'Verified',
     canReopen: documentItem.state === 'Uploaded' || documentItem.state === 'Verified' || documentItem.state === "Doesn't exist",
     canViewSentComment: documentItem.state === 'Reopened' && documentItem.reviewerComments.length > 0,
   };
+}
+
+function getUnverifiedDocumentState(documentItem: RequiredDocumentItem): Exclude<DocumentState, 'Verified' | 'Reopened'> {
+  return documentItem.uploadedFiles.length > 0 ? 'Uploaded' : documentItem.missingDocumentReturnState ?? 'Not uploaded';
 }
 
 function formatTimestamp(timestamp: string) {
@@ -594,7 +606,7 @@ function App() {
       return;
     }
 
-    if (selectedDocument.state === "Doesn't exist") {
+    if (selectedDocument.state === "Doesn't exist" || selectedDocument.state === 'Not uploaded') {
       setActiveReopenDraft(null);
       setActiveAbsenceAcceptanceDraft({
         groupId: selectedGroup.id,
@@ -615,13 +627,16 @@ function App() {
     );
   }
 
-  function handleMarkDocumentUploaded() {
-    if (!selectedDocumentActions.canMarkUploaded) {
+  function handleUnverifyDocument() {
+    if (!selectedDocumentActions.canUnverify) {
       return;
     }
 
-    updateSelectedDocument({ ...selectedDocument, state: 'Uploaded' });
+    updateSelectedDocument({ ...selectedDocument, state: getUnverifiedDocumentState(selectedDocument) });
     setVisibleSentCommentDocumentId(null);
+    setActiveAbsenceAcceptanceDraft((currentDraft) =>
+      currentDraft?.documentId === selectedDocument.id ? null : currentDraft,
+    );
     setActiveReopenDraft((currentDraft) =>
       currentDraft?.documentId === selectedDocument.id ? null : currentDraft,
     );
@@ -711,6 +726,7 @@ function App() {
     updateSelectedDocument({
       ...selectedDocument,
       state: 'Verified',
+      missingDocumentReturnState: selectedDocument.state === "Doesn't exist" ? "Doesn't exist" : 'Not uploaded',
       absenceAcceptanceComments: [
         acceptanceComment,
         ...(selectedDocument.absenceAcceptanceComments ?? []),
@@ -908,10 +924,10 @@ function App() {
                           Verify
                         </button>
                       ) : null}
-                      {selectedDocumentActions.canMarkUploaded ? (
-                        <button className="static-button" type="button" onClick={handleMarkDocumentUploaded}>
+                      {selectedDocumentActions.canUnverify ? (
+                        <button className="static-button" type="button" onClick={handleUnverifyDocument}>
                           <Upload aria-hidden="true" size={16} />
-                          Mark as uploaded
+                          Unverify
                         </button>
                       ) : null}
                       {selectedDocumentActions.canReopen ? (

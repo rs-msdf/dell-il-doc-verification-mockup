@@ -101,10 +101,10 @@ Navigation checks:
 Action checks:
 
 - `Uploaded` documents expose Verify and Reopen.
-- `Verified` documents expose Reopen and Mark as uploaded, but not Verify.
-- Mark as uploaded changes a `Verified` document back to `Uploaded` without changing file history.
+- `Verified` documents expose Reopen and Unverify, but not Verify.
+- Unverify changes a `Verified` document back to `Uploaded` when files exist, `Not uploaded` when no file exists, or `Doesn't exist` when the applicant previously marked the missing document that way.
 - `Doesn't exist` documents expose Verify and Reopen with no preview, and Verify requires an acceptance comment.
-- `Not uploaded` documents expose no reviewer decision actions.
+- `Not uploaded` documents expose Verify with no preview, and Verify requires an acceptance comment.
 - `Reopened` documents expose Verify and a control to view the latest sent correction comment.
 
 Validation checks:
@@ -125,7 +125,7 @@ Completion checks:
 - Unchecking a field in a complete group makes the group incomplete.
 - Reopening a verified document in a complete group makes the group incomplete.
 - Verifying a reopened document can make its group complete again when all fields and other documents are complete.
-- Marking a verified document as uploaded makes the document and group incomplete until it is verified again.
+- Unverifying a verified document makes the document and group incomplete until it is verified again.
 - Overall progress is derived from current completed groups.
 
 ## 4. Confusion log template
@@ -162,7 +162,7 @@ Result: all five scenarios passed after implementation.
 
 Additional navigation result: the two-page summary/drilldown smoke test passed. The summary page rendered exactly five group cards with no workspace below it, clicking Applicant Income opened only that drilldown workspace, the back button returned to the summary, and returning to Applicant Income preserved the selected uploaded-file tab.
 
-Additional transition result: the `Verified` to `Uploaded` reverse-transition smoke test passed. A verified Applicant ID document exposed `Mark as uploaded`, did not expose `Verify` until after reversal, preserved the selected file context, increased blockers after moving back to `Uploaded`, and returned to the prior blocker count after verifying again.
+Additional transition result: the reverse-transition smoke test passed. A verified Applicant ID document with files returned to `Uploaded`, a verified no-file document accepted from `Not uploaded` returned to `Not uploaded`, and a verified no-file document previously marked `Doesn't exist` by the applicant returned to `Doesn't exist`.
 
 Additional reopen-entry result: the inline reopen comment flow smoke test passed. Clicking `Reopen` opened the required comment field directly below the decision buttons, empty submission validation appeared in place, and submitting a valid comment still stored the reviewer comment and notification feedback.
 

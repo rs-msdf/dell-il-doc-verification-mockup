@@ -72,7 +72,7 @@ Phase 1 identifies the reviewer transitions needed later, but does not implement
 | `Uploaded` | Can become `Verified` or `Reopened` with required comment. |
 | `Verified` | Can become `Reopened` with required comment. |
 | `Doesn't exist` | Can become `Verified` or `Reopened` with required comment. |
-| `Not uploaded` | No reviewer verification action is available until evidence or valid absence context exists. |
+| `Not uploaded` | Can become `Verified` with a required comment when staff verifies that the document does not exist. |
 | `Reopened` | Review resumes only after applicant replacement upload returns the item to review-ready status. |
 
 ## Completion examples

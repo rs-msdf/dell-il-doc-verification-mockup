@@ -28,10 +28,12 @@
   - Not uploaded -> Doesn't exist.
   - Reopened -> Uploaded, after the applicant uploads a replacement file.
 - Reviewer transitions:
+  - Not uploaded -> Verified (comment required).
   - Uploaded -> Verified.
+  - Verified -> Uploaded, Not uploaded, or Doesn't exist through Unverify, depending on uploaded files and the prior missing-document state.
   - Uploaded -> Reopened (comment required).
   - Verified -> Reopened (comment required).
-  - Doesn't exist -> Verified.
+  - Doesn't exist -> Verified (comment required).
   - Doesn't exist -> Reopened (comment required).
 
 ### 4. Reopen behavior

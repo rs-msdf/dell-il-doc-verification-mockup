@@ -75,7 +75,7 @@ Changing the selected document updates:
 
 ### Empty and comment-only states
 
-- `Not uploaded`: show that no file exists yet and no reviewer action is currently available.
+- `Not uploaded`: show that no file exists yet and allow Verify with a required acceptance comment when staff confirms the document does not exist.
 - `Doesn't exist`: show applicant comment as the evidence context, no preview, and available reviewer actions `Verify` and `Reopen`.
 - `Reopened`: show a clear action-area control for viewing the latest sent correction comment, preserve simulated notification status, and allow verification when the reviewer accepts the evidence.
 
@@ -100,17 +100,19 @@ Changing the selected document updates:
 When the reviewer clicks `Verify`:
 
 - If the selected document state is `Uploaded` or `Reopened`, set state to `Verified`.
-- If the selected document state is `Doesn't exist`, reveal a required acceptance comment input directly under the document decision buttons before setting state to `Verified`.
-- On submitting a valid `Doesn't exist` acceptance comment, store the comment with timestamp-like mock metadata and set state to `Verified`.
+- If the selected document state is `Not uploaded` or `Doesn't exist`, reveal a required acceptance comment input directly under the document decision buttons before setting state to `Verified`.
+- On submitting a valid missing-document acceptance comment, store the comment with timestamp-like mock metadata, remember whether the document came from `Not uploaded` or `Doesn't exist`, and set state to `Verified`.
 - Clear any active reopen-comment draft for that document.
 - Recalculate group completion and blockers.
 - Keep the selected document open so the reviewer can see the result.
 
-### Mark as uploaded
+### Unverify
 
-When the reviewer clicks `Mark as uploaded`:
+When the reviewer clicks `Unverify`:
 
-- If the selected document state is `Verified`, set state back to `Uploaded`.
+- If the selected document state is `Verified` and uploaded files exist, set state back to `Uploaded`.
+- If no uploaded files exist, set state back to `Not uploaded` unless the document was previously marked `Doesn't exist` by the applicant.
+- If no uploaded files exist and the document was previously marked `Doesn't exist` by the applicant, set state back to `Doesn't exist`.
 - Preserve uploaded-file history and the selected uploaded file.
 - Clear any active reopen-comment draft for that document.
 - Recalculate group completion and blockers so an accidental verification can be corrected immediately.

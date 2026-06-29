@@ -23,6 +23,7 @@ The shape does not need to become production architecture. It only needs to make
 
 ```ts
 type DocumentState = 'Not uploaded' | 'Uploaded' | "Doesn't exist" | 'Reopened' | 'Verified';
+type MissingDocumentReturnState = 'Not uploaded' | "Doesn't exist";
 
 type VerificationGroup = {
   id: string;
@@ -38,6 +39,7 @@ type RequiredDocumentItem = {
   applicantComment: string;
   uploadedFiles: UploadedFile[];
   reviewerComments: ReviewerComment[];
+  missingDocumentReturnState?: MissingDocumentReturnState;
   absenceAcceptanceComments?: ReviewerComment[];
 };
 
@@ -63,22 +65,23 @@ type ApplicationField = {
 
 | Current state | Available reviewer actions | Result state | Comment required |
 | --- | --- | --- | --- |
-| `Not uploaded` | None | No change | No |
+| `Not uploaded` | Verify | `Verified` | Yes |
 | `Uploaded` | Verify | `Verified` | No |
 | `Uploaded` | Reopen | `Reopened` | Yes |
 | `Doesn't exist` | Verify | `Verified` | Yes |
 | `Doesn't exist` | Reopen | `Reopened` | Yes |
 | `Reopened` | Verify | `Verified` | No |
-| `Verified` | Mark as uploaded | `Uploaded` | No |
+| `Verified` | Unverify | `Uploaded`, `Not uploaded`, or `Doesn't exist` | No |
 | `Verified` | Reopen | `Reopened` | Yes |
 
-`Doesn't exist` remains a candidate-side document state. The reviewer does not set a document to `Doesn't exist`; the reviewer can only accept it as verified with an explanatory comment or reopen it for correction.
+`Doesn't exist` remains a candidate-side document state. The reviewer does not set a document to `Doesn't exist`; the reviewer can only accept it as verified with an explanatory comment or reopen it for correction. A reviewer can also verify a `Not uploaded` item with the same required explanatory comment when staff determines the document does not exist and accepts that non-existence in one step.
+
+When a `Verified` document is unverified, the prototype returns it to the right reviewable state: documents with uploaded files return to `Uploaded`, missing documents accepted from `Not uploaded` return to `Not uploaded`, and missing documents previously marked `Doesn't exist` by the applicant return to `Doesn't exist`. The optional `missingDocumentReturnState` preserves that distinction after a no-file document is verified.
 
 ## 4. Unsupported transitions
 
 The UI should not expose these as available actions:
 
-- `Not uploaded` to `Verified`.
 - `Not uploaded` to `Reopened`.
 - Any reviewer action that changes uploaded file history.
 

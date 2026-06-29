@@ -75,7 +75,7 @@ Turn the static mockup into a clickable prototype that validates navigation, rev
 - Allow reviewers to move between the five verification groups while preserving visible progress.
 - Add prototype controls for document state transitions:
   - `Uploaded` to `Verified`.
-  - `Verified` to `Uploaded` when a reviewer needs to undo a mistaken verification.
+  - `Verified` to `Uploaded`, `Not uploaded`, or `Doesn't exist` through Unverify when a reviewer needs to undo a mistaken verification.
   - `Uploaded` to `Reopened` with required comment.
   - `Verified` to `Reopened` with required comment.
   - `Reopened` to `Verified` after reviewer accepts the corrected or existing evidence.

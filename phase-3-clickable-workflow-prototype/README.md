@@ -36,9 +36,9 @@ Phase 3 is complete when the prototype supports realistic reviewer navigation an
 - Document tabs switch the selected required document item and update comments, file history, preview availability, and decision actions.
 - Uploaded-file tabs switch the selected file for document items with multiple files.
 - Document decision actions show only valid reviewer transitions for the selected document state.
-- Verified documents can be marked back to `Uploaded` when a reviewer needs to undo an accidental verification.
+- Verified documents can be unverified back to `Uploaded`, `Not uploaded`, or `Doesn't exist` based on whether a file exists and how a missing document was originally represented.
 - Reopened documents can be verified and expose the latest sent correction comment from the action area.
-- `Doesn't exist` documents use the same status treatment as `Not uploaded` and require an explanatory acceptance comment before verification.
+- `Not uploaded` and `Doesn't exist` documents require an explanatory acceptance comment before missing-document verification.
 - Reopen requires a reviewer comment before the state changes and shows simulated candidate-notification feedback.
 - Field values can be edited independently from field confirmation checkboxes.
 - Group and application progress update from the current document states and field confirmation states.
@@ -51,7 +51,7 @@ Phase 3 has been implemented in the Vite + React + TypeScript mockup as a fronte
 - `src/App.tsx` now owns typed fixtures for all five verification groups, required document items, uploaded files, field rows, reviewer reopen comments, and local notification feedback.
 - The UI is split into a group-summary page and a selected-group drilldown page with explicit back navigation.
 - Group cards, document tabs, and uploaded-file tabs are clickable and preserve reviewer selections while navigating among groups.
-- Document actions are derived from the selected document state: `Uploaded` documents can be verified or reopened, `Doesn't exist` documents can be reopened or verified with an acceptance comment, `Verified` documents can be reopened or marked back to `Uploaded`, `Reopened` documents can be verified and expose the sent correction comment, and `Not uploaded` documents wait for applicant action.
+- Document actions are derived from the selected document state: `Uploaded` documents can be verified or reopened, `Not uploaded` and `Doesn't exist` documents can be verified with an acceptance comment, `Doesn't exist` documents can also be reopened, `Verified` documents can be reopened or unverified back to the right underlying state, and `Reopened` documents can be verified and expose the sent correction comment.
 - Reopen requires a non-empty reviewer comment directly under the decision controls, stores the submitted comment, and shows simulated candidate-notification feedback.
 - Field values are editable independently from field confirmation checkboxes, and edited fields receive an in-session marker.
 - Group card completion counts, group-card missing-work details, selected-group blocker chips, and overall application progress are derived from current document and field state.

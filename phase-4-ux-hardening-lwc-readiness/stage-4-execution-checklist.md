@@ -12,6 +12,7 @@
 - [ ] Test summary-page group selection and prioritization.
 - [ ] Test uploaded-document verification.
 - [ ] Test reopen comment entry and sent-comment visibility.
+- [ ] Test `Not uploaded` acceptance with required reviewer comment.
 - [ ] Test `Doesn't exist` acceptance with required reviewer comment.
 - [ ] Test field editing and separate field confirmation.
 - [ ] Capture wording, confidence, and accountability observations.

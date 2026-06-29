@@ -34,7 +34,7 @@ The data should preserve the Phase 2 Dana Levi scenario while expanding it enoug
 | --- | --- | --- | --- | --- |
 | ID | `Verified` | 1 | `Clear scan of front ID.` | Reopen from verified with required comment. |
 | Back of ID | `Uploaded` | 2 | `I uploaded a clearer back-side image after the first scan was blurry.` | Verify, reopen, file switching. |
-| ID appendix | `Not uploaded` | 0 | `I do not currently have an appendix document.` | No reviewer actions, no preview. |
+| ID appendix | `Not uploaded` | 0 | `I do not currently have an appendix document.` | Verify with required acceptance comment, no preview. |
 
 ### Parent 1 ID
 
