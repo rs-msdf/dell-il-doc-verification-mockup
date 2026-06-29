@@ -125,7 +125,15 @@ Unverify must return a verified document to the correct reviewable state:
 
 ## 10. Field Review
 
-Standard evidence-backed fields must:
+Each field must belong to exactly one field review category:
+
+| Category | UI treatment | Completion rule |
+| --- | --- | --- |
+| Confirmation field | Editable value plus explicit confirmation checkbox. Checked fields read `Confirmed`; unchecked fields read `Confirm`. | Complete when the confirmation checkbox is checked. |
+| Read-only field | Static value display. Blank values render as `Blank`. No input and no confirmation checkbox. | Always complete because the reviewer cannot edit or confirm it. |
+| Required override field | Editable value. No confirmation checkbox. Shows completion feedback only when a value is present. | Complete when the trimmed value is not empty. |
+
+Standard evidence-backed confirmation fields must:
 
 - Show the current application value.
 - Allow reviewer edits.
@@ -133,11 +141,42 @@ Standard evidence-backed fields must:
 - Keep editing separate from confirmation.
 - Use an explicit confirmation checkbox where checked fields read `Confirmed` and unchecked fields read `Confirm`.
 
+The following fields are confirmation fields:
+
+| Task | Confirmation fields |
+| --- | --- |
+| Applicant ID | First name, Last name, ID number, Date of birth, Marital status, Number of children under 18 |
+| Parent 1 ID | Number of siblings under 24 years of age |
+| Parent 2 ID | Number of siblings under 24 years of age |
+| Applicant Income | Total monthly income (gross) |
+| Parent 1 Income | Total monthly income (gross) |
+| Parent 2 Income | Total monthly income (gross) |
+| Partner Income | Total monthly income (gross) |
+| Family Member Disability | Relation to applicant, Percent disability |
+| Parent 1 Estrangement | Parent 1 status |
+| Parent 2 Estrangement | Parent 2 status |
+| Parent 1 Death Certificate | Parent 1 status |
+| Parent 2 Death Certificate | Parent 2 status |
+
 Score override tasks are the exception:
 
 - Read-only context fields do not require confirmation checkboxes.
 - `Last school score` explicitly says `Documents not required for this verification task`, shows blank official decile fields, and completes when `Override last school score` is filled.
 - `Address during last school year` shows read-only address lookup fields. When `Address score` is blank, `Address score override` is editable and required for task completion.
+
+The following fields are read-only fields with no confirmation checkbox:
+
+| Task | Read-only fields |
+| --- | --- |
+| Address during last school year | Full address, Longitude, Latitude, Statistical area, Socio economic index, Socio economic index comments, Address score |
+| Last school score | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score |
+
+The following fields are required override fields with no confirmation checkbox:
+
+| Task | Required override field | When shown |
+| --- | --- | --- |
+| Address during last school year | Address score override | Shown and required when `Address score` is blank. |
+| Last school score | Override last school score | Shown and required when official school decile or score data is blank. |
 
 ## 11. Completion Logic
 
