@@ -60,6 +60,7 @@ type VerificationGroup = {
   name: string;
   documents: RequiredDocumentItem[];
   fields: ApplicationField[];
+  noDocumentsMessage?: string;
 };
 
 type ReopenDraft = {
@@ -740,6 +741,7 @@ const initialGroups: VerificationGroup[] = [
     id: 'last-school-score-override',
     name: 'Last school score',
     documents: [],
+    noDocumentsMessage: 'Documents not required for this verification task',
     fields: [
       {
         id: 'override-last-school-name-district',
@@ -1247,7 +1249,7 @@ function App() {
 
   const selectedGroupChips = useMemo(() => {
     const documentChip = selectedGroup.documents.length === 0
-      ? 'No documents attached'
+      ? selectedGroup.noDocumentsMessage ?? 'No documents attached'
       : selectedGroupBlockers.unverifiedDocuments.length > 0
         ? `${selectedGroupBlockers.unverifiedDocuments.length} documents need verification`
         : 'All documents verified';
@@ -1308,7 +1310,7 @@ function App() {
               documentsMissing > 0
                 ? `${documentsMissing} ${documentsMissing === 1 ? 'document needs' : 'documents need'} review`
                 : group.documents.length === 0
-                  ? 'No documents attached'
+                  ? group.noDocumentsMessage ?? 'No documents attached'
                 : null,
               fieldsMissing > 0 ? `${fieldsMissing} ${fieldsMissing === 1 ? 'field needs' : 'fields need'} review` : null,
             ].filter(Boolean).join(' · ');
@@ -1344,7 +1346,7 @@ function App() {
               </div>
 
               <div className={`group-card-blockers ${missingSummary ? 'needs-attention' : ''}`}>
-                {missingSummary || (group.documents.length === 0 ? 'No documents attached · score fields complete' : 'All documents verified · all fields confirmed')}
+                {missingSummary || (group.documents.length === 0 ? `${group.noDocumentsMessage ?? 'No documents attached'} · score fields complete` : 'All documents verified · all fields confirmed')}
               </div>
 
               <div className="group-card-action">Open task</div>
@@ -1398,7 +1400,7 @@ function App() {
                         </span>
                       </button>
                       );
-                    }) : <span className="no-documents-chip">No attached documents</span>}
+                    }) : <span className="no-documents-chip">{selectedGroup.noDocumentsMessage ?? 'No attached documents'}</span>}
                   </div>
                 </div>
 
@@ -1571,7 +1573,7 @@ function App() {
                     <h3>No preview available</h3>
                     <p>
                       {!selectedDocument
-                        ? 'This verification task has no attached documents. Review the fields for completion.'
+                        ? `${selectedGroup.noDocumentsMessage ?? 'This verification task has no attached documents'}. Review the fields for completion.`
                         : selectedDocument.state === "Doesn't exist"
                         ? 'Review the applicant comment as the evidence context for this document item.'
                         : 'No uploaded file exists for this document item yet.'}

@@ -39,7 +39,7 @@ Render these 14 verification tasks:
 | Parent 1 Death Certificate | Death certificate | Parent 1 status |
 | Parent 2 Death Certificate | Death certificate | Parent 2 status |
 | Address during last school year | List of addresses | Full address, Longitude, Latitude, Statistical area, Socio economic index, Socio economic index comments, Address score, Address score override when Address score is blank |
-| Last school score | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score, Override last school score |
+| Last school score | Documents not required for this verification task | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score, Override last school score |
 
 Parent 1 ID and Parent 2 ID intentionally use the same field wording. Income tasks intentionally reuse the same document names and field wording for applicant, parents, and partner.
 
@@ -136,7 +136,7 @@ Standard evidence-backed fields must:
 Score override tasks are the exception:
 
 - Read-only context fields do not require confirmation checkboxes.
-- `Last school score` shows blank official decile fields and completes when `Override last school score` is filled.
+- `Last school score` explicitly says `Documents not required for this verification task`, shows blank official decile fields, and completes when `Override last school score` is filled.
 - `Address during last school year` shows read-only address lookup fields. When `Address score` is blank, `Address score override` is editable and required for task completion.
 
 ## 11. Completion Logic
