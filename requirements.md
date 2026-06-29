@@ -22,25 +22,33 @@ The UI should reduce uncertainty by making every decision explicit, traceable, a
 
 ## 3. Verification Tasks
 
-Render these six verification tasks:
+Render these 14 verification tasks:
 
 | Task | Required documents | Fields |
 | --- | --- | --- |
 | Applicant ID | ID, Back of ID, ID appendix | First name, Last name, ID number, Date of birth, Marital status, Number of children under 18 |
 | Parent 1 ID | ID, Back of ID, ID appendix | Number of siblings under 24 years of age |
 | Parent 2 ID | ID, Back of ID, ID appendix | Number of siblings under 24 years of age |
-| Applicant Income | Income statement, Benefits statement | Applicant income |
-| Applicant Disability Status | Disability certificate | Applicant disability percentage |
-| Last school score override | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score, Override last school score |
+| Applicant Income | 2024 Income, 2024 Benefits | Total monthly income (gross) |
+| Parent 1 Income | 2024 Income, 2024 Benefits | Total monthly income (gross) |
+| Parent 2 Income | 2024 Income, 2024 Benefits | Total monthly income (gross) |
+| Partner Income | 2024 Income, 2024 Benefits | Total monthly income (gross) |
+| Family Member Disability | Disability certificate | Relation to applicant, Percent disability |
+| Parent 1 Estrangement | Estrangement attestation | Parent 1 status |
+| Parent 2 Estrangement | Estrangement attestation | Parent 2 status |
+| Parent 1 Death Certificate | Death certificate | Parent 1 status |
+| Parent 2 Death Certificate | Death certificate | Parent 2 status |
+| Address during last school year | List of addresses | Full address, Longitude, Latitude, Statistical area, Socio economic index, Socio economic index comments, Address score, Address score override when Address score is blank |
+| Last school score | None | Last school name and district, Last school was in Israel, Last year of attendance, Last grade studied, School decile, School decile score, Override last school score |
 
-Parent 1 ID and Parent 2 ID intentionally use the same field wording.
+Parent 1 ID and Parent 2 ID intentionally use the same field wording. Income tasks intentionally reuse the same document names and field wording for applicant, parents, and partner.
 
 ## 4. Summary Page
 
 The summary page must:
 
 - Show applicant identity, application reference, program name, and overall task progress.
-- Show all six verification tasks as selectable cards.
+- Show all 14 verification tasks as selectable cards.
 - Show each task's complete or incomplete status.
 - Show document completion count and field completion count per task.
 - Show actionable missing-work text, such as `2 documents need review`, `1 field needs review`, or `No documents attached`.
@@ -125,10 +133,11 @@ Standard evidence-backed fields must:
 - Keep editing separate from confirmation.
 - Use an explicit confirmation checkbox where checked fields read `Confirmed` and unchecked fields read `Confirm`.
 
-The field-only last-school score override task is the exception:
+Score override tasks are the exception:
 
 - Read-only context fields do not require confirmation checkboxes.
-- `Last school score override` shows blank official decile fields and completes when `Override last school score` is filled.
+- `Last school score` shows blank official decile fields and completes when `Override last school score` is filled.
+- `Address during last school year` shows read-only address lookup fields. When `Address score` is blank, `Address score override` is editable and required for task completion.
 
 ## 11. Completion Logic
 
@@ -155,7 +164,7 @@ taskComplete = every(task.documents, documentComplete)
 
 Field-only tasks have no documents, so document completion is vacuously complete and field requirements control completion.
 
-Top-level progress is the count of complete tasks out of total tasks, for example `2 of 6 tasks complete`. It must be derived from current state, not hardcoded.
+Top-level progress is the count of complete tasks out of total tasks, for example `2 of 14 tasks complete`. It must be derived from current state, not hardcoded.
 
 ## 12. Blockers
 
@@ -191,13 +200,13 @@ Current fixture identity:
 | Application reference | APP-2026-0148 |
 | Program | Dell IL Tech Leaders |
 
-Initial progress should derive to `2 of 6 tasks complete`.
+Initial progress should derive to `2 of 14 tasks complete`.
 
 ## 14. Validation Checklist
 
 Navigation:
 
-- All six task cards are clickable.
+- All 14 task cards are clickable.
 - Task cards show document and field progress plus missing-work details.
 - Back navigation returns to the summary page without losing state.
 - Document tabs and uploaded-file tabs update selected content.
@@ -219,7 +228,7 @@ Completion:
 - Checking or unchecking a standard field updates blockers and task completion.
 - Reopening or unverifying a verified document makes its task incomplete.
 - Verifying required documents can make a task complete when field requirements are complete.
-- Filling `Override last school score` makes `Last school score override` complete.
+- Filling `Override last school score` makes `Last school score` complete.
 - Overall progress is derived from current completed tasks.
 
 ## 15. Accessibility and UX Quality
